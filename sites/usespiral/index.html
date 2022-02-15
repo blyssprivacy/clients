@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="./css/main.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SpiralBTC</title>
+
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; connect-src 'self' https://api.usespiral.com data:; script-src 'wasm-unsafe-eval' 'sha256-8uIvT0nR4ExIEWCOWDaiCdON4iZAiRq5A21LWMruVO0='">
+</head>
+
+<body>
+    <div class="topframe">
+        <div class="logo">
+            <span class="brandname"><img src="favicon.svg" height="48px" class="brand-img" alt="Spiral Logo">Spiral</span>
+            <span class="brandsub">for BTC</span>
+        </div>
+        <div class="main-header">
+            <div class="pitch-container">
+                <div class="pitch">
+                    <div class="pitchhead">Count your coins, privately.</div>
+                    <div class="pitchbody">Look up any BTC address balance, without revealing the address to anyone – not even us.
+                    </div>
+                </div>
+            </div>
+            <div class="active-area">
+                <div class="resultcard collapsed">
+                    <div class="btcaddressbar">
+                        <div class="btcaddressline">
+                            <div class="search-container">
+                                <input type="text" id="searchbox" placeholder="BTC address (1…, 3…, bc1…)"/>
+                            </div>
+                            <div class="purplecircle">
+                                <input id="make_query" type="button" class="whitearrow" value="→" />
+                                <div class="loading">
+                                    <div class="progress off"><div></div></div>
+                                    <div class="loading-icon off la-ball-clip-rotate la-sm"><div></div></div>
+                                    <div class="message inprogress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-area">
+                        <div id="output" class="address-data"></div>
+                        <div class="off" id="currentasof"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="infocards">
+        <div class="infobox">
+            <div class="infohead">The ultimate in BTC privacy.</div>
+            <div class="infobody">All
+                information about the addresses you look up stays on your device. The Spiral server learns nothing about your queries.</div>
+        </div>
+        <div class="infobox">
+            <div class="infohead">Tighten your OpSec.</div>
+            <div class="infobody">When you use a
+                block explorer, you're linking your identity with your money, inviting phishing. Spiral offers the privacy of a self-hosted node, with zero maintenance.</div>
+        </div>
+        <div class="infobox">
+            <div class="infohead">Built on strong cryptography.</div>
+            <div class="infobody">Spiral
+                uses fully homomorphic encryption to guarantee your privacy. 
+                Read <a href="https://eprint.iacr.org/2022/368">our paper</a>
+                or check out our <a href="https://github.com/menonsamir/spiral-rs">source code</a> for details.
+            </div>
+        </div>
+    </div>
+
+    <div class="ctabox">
+        <div class="infohead compact">See what's coming next.</div>
+        <div class="infobody">We're
+            building more features, like Ledger compatibility, private transaction lookup, and more. Help us test,
+            and we'll give you forever free access.</div>
+        <form name="spiral-signup" method="POST" data-netlify="true" class="emailbox">
+            <div class="search-container">
+                <input type="email" name="email" class="email-inp" placeholder="email address"/>
+            </div>
+            <div class="purplecircle">
+                <button type="submit" class="whitearrow" id="email-button">→</button>
+            </div>
+        </form>
+        <div class="infobody">Want to use our private database for
+            something else? Let's talk! <a href="mailto:founders@usespiral.com">founders@usespiral.com</a></div>
+    </div>
+    <script type="module" src="dist/bundle.js" integrity="sha256-8uIvT0nR4ExIEWCOWDaiCdON4iZAiRq5A21LWMruVO0="></script>
+
+    <footer>
+        Spiral is currently in beta. Our implementation is expected to achieve the privacy goals we set above, but has not been formally audited. Do NOT use Spiral for mission-critical applications yet.
+    </footer>
+</body>
+
+</html>
