@@ -14,4 +14,4 @@ This is an implementation of our paper "Spiral: Fast, High-Rate Single-Server PI
     - To preprocess a database, run `cargo run --release --bin preprocess_db dbfile.db dbfile.dbp`.
     - To run the server, run `target/release/server dbfile.dbp` with the preprocessed database file `dbfile.dbp`
 - In `spiral-rs/client`:
-    - To build the client for our Wikipedia demo, run `wasm-pack build --target web --out-dir static/pkg`
+    - To build the client for our Wikipedia demo, run `wasm-pack build --target web --out-dir ../sites/wiki/pkg`
