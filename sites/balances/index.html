@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/loading.css" rel="stylesheet" />
+
+    <title>Private Bitcoin Balance Lookup via Spiral</title>
+
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-eval' 'wasm-eval';">
+  </head>
+  <body>
+    <div class="fixedpanel balances">
+      <div class="topbar">
+        <div class="title">
+          <h1>Private Bitcoin Balance Lookup via Spiral</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="content balances">
+      <div class="main-area">
+        <div class="searchsuperbox">
+          <span class="label">Address:</span>
+          <div class="searchandsuggestions">
+            <div class="searchbutton">
+              <input type="text" class="balances searchbox" placeholder="Bitcoin address (1…, 3…, bc1…)" />
+              <input id="make_query" type="button" value="&gt;" />
+              <div class="loading">
+                <div class="progress off"><div></div></div>
+                <div class="loading-icon hidden la-ball-clip-rotate la-dark la-sm"><div></div></div>
+                <div class="message inprogress"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="balance">
+          <span class="label">Balance:</span>
+          <span id="output" class="address-data"></span>
+        </div>
+      </div>
+      
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title">FAQ</div>
+          <div class="sidebar-collapse-btn"></div>
+        </div>
+        <div class="sidebar-content">
+          <h2>What is this?</h2>
+          <p>
+            This is a page is a demo of private Bitcoin address balance lookup using PIR built on homomorphic encryption.
+            This demo allows private access to all non-zero Bitcoin address balances as of July 9th, 2022. 
+            We use a data dumps from
+            <a href="http://addresses.loyce.club/">this helpful site</a>, so our data is only updated roughly daily.
+            In theory, even if the server is malicious, it will be unable to learn which addresses you look up.
+          </p>
+          <p>
+            The scheme used is outlined in our paper 
+            <a href="https://eprint.iacr.org/2022/368.pdf">"Spiral: Fast, High-Rate Single-Server PIR via FHE Composition"</a>. 
+            The code for our system is available <a href="https://github.com/menonsamir/spiral-rs">here</a>.
+          </p>
+
+          <h2>What costs are associated with running the demo?</h2>
+          <p>
+            When making your first query, this demo will upload 18 MB of data; each later query requires only 28 KB of upload. 
+            The server response to each query is 124 KB.
+          </p>
+
+          <h2>Should I use this in production?</h2>
+          <p>
+            No! This is research-quality software built for demonstration purposes; it is not intended to be 
+            side-channel resistant and has not undergone any kind of security review. Don't use this code in production.
+          </p>
+
+          <h2>Who made this demo?</h2>
+          <p>
+            <a href="https://samirmenon.com">Samir Menon</a>, a (currently) independent researcher in PIR and lattice-based cryptography. 
+            Please contact me with any questions, comments, and sugggestions at <a href="menon.samir@gmail.com">menon.samir@gmail.com</a>.
+            The underlying scheme is a joint work with Prof. David Wu at UT Austin.
+          </p>
+          </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

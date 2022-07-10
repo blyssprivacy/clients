@@ -132,24 +132,35 @@ async fn query<'a>(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let cfg_expand = r#"
+        {"n": 2,
+        "nu_1": 10,
+        "nu_2": 6,
+        "p": 512,
+        "q2_bits": 21,
+        "s_e": 85.83255142749422,
+        "t_gsw": 10,
+        "t_conv": 4,
+        "t_exp_left": 16,
+        "t_exp_right": 56,
+        "instances": 11,
+        "db_item_size": 100000 }
+    "#;
+
     let args: Vec<String> = env::args().collect();
     let db_preprocessed_path = &args[1];
+    let mut port = "8088";
+    let box_params;
+    if args.len() > 2 {
+        port = &args[2];
+        let target_num_log2: usize = args[3].parse().unwrap();
+        let item_size_bytes: usize = args[4].parse().unwrap();
 
-    let cfg_expand = r#"
-        {'n': 2,
-        'nu_1': 10,
-        'nu_2': 6,
-        'p': 512,
-        'q2_bits': 21,
-        's_e': 85.83255142749422,
-        't_gsw': 10,
-        't_conv': 4,
-        't_exp_left': 16,
-        't_exp_right': 56,
-        'instances': 11,
-        'db_item_size': 100000 }
-    "#;
-    let box_params = Box::new(params_from_json(&cfg_expand.replace("'", "\"")));
+        box_params = Box::new(get_params_from_store(target_num_log2, item_size_bytes));
+    } else {
+        box_params = Box::new(params_from_json(cfg_expand));
+    }
+    
     let params: &'static Params = Box::leak(box_params);
 
     let mut file = File::open(db_preprocessed_path).unwrap();
@@ -184,7 +195,7 @@ async fn main() -> std::io::Result<()> {
     };
 
     Server::build()
-        .bind("http/1", "localhost:8088", move || {
+        .bind("http/1", format!("localhost:{}", port), move || {
             HttpServiceBuilder::default()
                 .h1(map_config(app_builder(), |_| {
                     actix_web::dev::AppConfig::default()
