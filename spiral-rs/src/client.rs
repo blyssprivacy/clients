@@ -652,23 +652,32 @@ mod test {
             get_vec(&pub_params.v_packing),
             get_vec(&deserialized1.v_packing)
         );
+
+        println!("packing mats (bytes) {}", get_vec(&pub_params.v_packing).len()*8);
+        println!("total size   (bytes) {}", serialized1.len());
         if pub_params.v_conversion.is_some() {
+            let l1 = get_vec(&pub_params.v_conversion.unwrap());
             assert_eq!(
-                get_vec(&pub_params.v_conversion.unwrap()),
+                l1,
                 get_vec(&deserialized1.v_conversion.unwrap())
             );
+            println!("conv mats (bytes) {}", l1.len()*8);
         }
         if pub_params.v_expansion_left.is_some() {
+            let l1 = get_vec(&pub_params.v_expansion_left.unwrap());
             assert_eq!(
-                get_vec(&pub_params.v_expansion_left.unwrap()),
+                l1,
                 get_vec(&deserialized1.v_expansion_left.unwrap())
             );
+            println!("exp left (bytes) {}", l1.len()*8);
         }
         if pub_params.v_expansion_right.is_some() {
+            let l1 = get_vec(&pub_params.v_expansion_right.unwrap());
             assert_eq!(
-                get_vec(&pub_params.v_expansion_right.unwrap()),
+                l1,
                 get_vec(&deserialized1.v_expansion_right.unwrap())
             );
+            println!("exp right (bytes) {}", l1.len()*8);
         }
     }
 
@@ -694,6 +703,25 @@ mod test {
             'db_item_size': 100000 }
         "#;
         let cfg = cfg_expand.replace("'", "\"");
+        let params = params_from_json(&cfg);
+        public_parameters_serialization_is_correct_for_params(params)
+    }
+
+    #[test]
+    fn real_public_parameters_2_serialization_is_correct() {
+        let cfg = r#"
+            { "n": 4,
+            "nu_1": 9,
+            "nu_2": 5,
+            "p": 256,
+            "q2_bits": 20,
+            "t_gsw": 8,
+            "t_conv": 4,
+            "t_exp_left": 8,
+            "t_exp_right": 56,
+            "instances": 2,
+            "db_item_size": 65536 }
+        "#;
         let params = params_from_json(&cfg);
         public_parameters_serialization_is_correct_for_params(params)
     }

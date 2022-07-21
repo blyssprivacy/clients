@@ -7,6 +7,7 @@ pub mod util;
 pub mod gadget;
 pub mod ntt;
 pub mod params;
+pub mod noise_model;
 pub mod poly;
 
 pub mod client;
