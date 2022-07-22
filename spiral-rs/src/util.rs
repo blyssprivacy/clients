@@ -42,6 +42,23 @@ pub fn calc_index(indices: &[usize], lengths: &[usize]) -> usize {
     idx
 }
 
+pub fn decompose_index(indices: &mut [usize], index: usize, lengths: &[usize]) {
+    let mut cur = index;
+    let mut prod = 1usize;
+    for i in 1..lengths.len() {
+        prod *= lengths[i];
+    }
+
+    for i in 0..lengths.len() {
+        let val = cur / prod;
+        cur -= val * prod;
+        indices[i] = val;
+        if i < lengths.len() - 1 {
+            prod /= lengths[i+1];
+        }
+    }
+}
+
 pub fn get_test_params() -> Params {
     Params::init(
         2048,
@@ -348,6 +365,16 @@ mod test {
             2048,
         );
         assert_eq!(b, c);
+    }
+
+    #[test]
+    fn test_decompose_calc_correct() {
+        let lengths = [5, 4, 3];
+        let indices = [2, 1, 2];
+        let idx = calc_index(&indices, &lengths);
+        let mut gues_indices = [0, 0, 0];
+        decompose_index(&mut gues_indices, idx, &lengths);
+        assert_eq!(indices, gues_indices);
     }
 
     #[test]

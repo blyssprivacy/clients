@@ -6,6 +6,7 @@ use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::time::Instant;
+use std::cell::RefCell;
 
 use crate::aligned_memory::*;
 use crate::arith::*;
@@ -391,7 +392,7 @@ pub fn generate_random_db_and_get_item<'a>(
     (item, v)
 }
 
-pub fn load_item_from_seek<'a, T: Seek + Read>(
+pub fn load_item_from_seek<'a, T: Seek + Read + Send + Sync>(
     params: &'a Params,
     seekable: &mut T,
     instance: usize,
@@ -434,7 +435,7 @@ pub fn load_item_from_seek<'a, T: Seek + Read>(
     out
 }
 
-pub fn load_db_from_seek<T: Seek + Read>(params: &Params, seekable: &mut T) -> AlignedMemory64 {
+pub fn load_db_from_seek(params: &Params, fname: &String) -> AlignedMemory64 {
     let instances = params.instances;
     let trials = params.n * params.n;
     let dim0 = 1 << params.db_dim_1;
@@ -443,33 +444,52 @@ pub fn load_db_from_seek<T: Seek + Read>(params: &Params, seekable: &mut T) -> A
     let db_size_words = instances * trials * num_items * params.poly_len;
     let mut v = AlignedMemory64::new(db_size_words);
 
-    for instance in 0..instances {
-        for trial in 0..trials {
-            for i in 0..num_items {
-                let ii = i % num_per;
-                let j = i / num_per;
+    let total_idx = instances * trials * num_items;
 
-                let mut db_item = load_item_from_seek(params, seekable, instance, trial, i);
-                // db_item.reduce_mod(params.pt_modulus);
+    thread_local!(static STORE: RefCell<Option<File>> = RefCell::new(None));
 
-                for z in 0..params.poly_len {
-                    db_item.data[z] =
-                        recenter_mod(db_item.data[z], params.pt_modulus, params.modulus);
-                }
+    (0..total_idx).into_par_iter().for_each(|idx| {
+        STORE.with(|cell| {
+            let mut local_store = cell.borrow_mut();
+            if local_store.is_none() {
+                *local_store = Some(File::open(fname).unwrap());
+            }
 
-                let db_item_ntt = db_item.ntt();
-                for z in 0..params.poly_len {
-                    let idx_dst = calc_index(
-                        &[instance, trial, z, ii, j],
-                        &[instances, trials, params.poly_len, num_per, dim0],
-                    );
+            let mut indices = [0, 0, 0];
+            decompose_index(&mut indices, idx, &[instances, trials, num_items]);
+            let instance = indices[0];
+            let trial = indices[1];
+            let i = indices[2];
 
-                    v[idx_dst] = db_item_ntt.data[z]
-                        | (db_item_ntt.data[params.poly_len + z] << PACKED_OFFSET_2);
+            let ii = i % num_per;
+            let j = i / num_per;
+
+            let mut file = File::open(fname).unwrap();
+
+            let mut db_item = load_item_from_seek(params, &mut file, instance, trial, i);
+            // db_item.reduce_mod(params.pt_modulus);
+
+            for z in 0..params.poly_len {
+                db_item.data[z] =
+                    recenter_mod(db_item.data[z], params.pt_modulus, params.modulus);
+            }
+
+            let db_item_ntt = db_item.ntt();
+            for z in 0..params.poly_len {
+                let idx_dst = calc_index(
+                    &[instance, trial, z, ii, j],
+                    &[instances, trials, params.poly_len, num_per, dim0],
+                );
+
+                let val = db_item_ntt.data[z]
+                    | (db_item_ntt.data[params.poly_len + z] << PACKED_OFFSET_2);
+                    
+                unsafe {
+                    *(v.as_ptr() as *mut u64).offset(idx_dst as isize) = val;
                 }
             }
-        }
-    }
+        });
+    });
     v
 }
 

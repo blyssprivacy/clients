@@ -9,6 +9,7 @@ use std::collections::VecDeque;
 use std::env;
 use std::fs::File;
 use std::sync::Mutex;
+use std::time::Instant;
 
 use actix_cors::Cors;
 use actix_http::HttpServiceBuilder;
@@ -20,6 +21,7 @@ use serde::Deserialize;
 const PUB_PARAMS_MAX: usize = 250;
 
 struct ServerState<'a> {
+    fname: String,
     params: &'a Params,
     db: AlignedMemory64,
     pub_params_map: Mutex<(VecDeque<String>, HashMap<String, PublicParameters<'a>>)>,
@@ -51,6 +53,30 @@ fn other_io_err<T>(_: T) -> PayloadError {
 
 fn get_not_found_err() -> PayloadError {
     PayloadError::Io(std::io::Error::from(std::io::ErrorKind::NotFound))
+}
+
+#[get("/debug")]
+async fn debug<'a>() -> Result<String, http::Error> {
+    Ok("{{\"status\":\"debugging\"}}".to_string())
+}
+
+#[post("/reload")]
+async fn reload<'a>(
+    data: web::Data<ServerState<'a>>,
+) -> Result<String, http::Error> {
+    let db_len = data.db.len();
+    let db_data = unsafe {
+        let db_data_ptr = data.db.as_ptr() as *mut u64;
+        std::slice::from_raw_parts_mut(db_data_ptr, db_len)
+    };
+
+    let mut file = File::open(data.fname.clone()).unwrap();
+    let now = Instant::now();
+    load_file(db_data, &mut file);
+    Ok(format!(
+        "{{\"status\":\"done reloading\", \"loading_time_ms\":{}}}",
+        now.elapsed().as_millis()
+    ))
 }
 
 #[get("/")]
@@ -160,6 +186,9 @@ async fn main() -> std::io::Result<()> {
     } else {
         box_params = Box::new(params_from_json(cfg_expand));
     }
+
+    // FIXME: very hacky to do port math
+    let debug_port = (port.parse::<u64>().unwrap() + 1000).to_string();
     
     let params: &'static Params = Box::leak(box_params);
 
@@ -167,14 +196,16 @@ async fn main() -> std::io::Result<()> {
     let db = load_preprocessed_db_from_file(params, &mut file);
 
     let server_state = ServerState {
+        fname: db_preprocessed_path.clone(),
         params: params,
         db: db,
         pub_params_map: Mutex::new((VecDeque::new(), HashMap::new())),
     };
     let state = web::Data::new(server_state);
+    let state_dup = state.clone();
 
-    let app_builder = move || {
-        let cors = Cors::default()
+    let cors_fn = || {
+        Cors::default()
             .allow_any_origin()
             .allowed_headers([
                 http::header::ORIGIN,
@@ -182,11 +213,13 @@ async fn main() -> std::io::Result<()> {
                 http::header::ACCEPT,
             ])
             .allow_any_method()
-            .max_age(3600);
+            .max_age(3600)
+    };
 
+    let app_builder = move || {
         App::new()
             .wrap(middleware::Compress::default())
-            .wrap(cors)
+            .wrap(cors_fn())
             .app_data(state.clone())
             .app_data(web::PayloadConfig::new(1 << 25))
             .service(setup)
@@ -194,10 +227,26 @@ async fn main() -> std::io::Result<()> {
             .service(check)
     };
 
+    let app_builder_util = move || {
+        App::new()
+            .wrap(middleware::Compress::default())
+            .wrap(cors_fn())
+            .app_data(state_dup.clone())
+            .service(debug)
+            .service(reload)
+    };
+
     Server::build()
         .bind("http/1", format!("localhost:{}", port), move || {
             HttpServiceBuilder::default()
                 .h1(map_config(app_builder(), |_| {
+                    actix_web::dev::AppConfig::default()
+                }))
+                .tcp()
+        })?
+        .bind("http/1", format!("localhost:{}", debug_port), move || {
+            HttpServiceBuilder::default()
+                .h1(map_config(app_builder_util(), |_| {
                     actix_web::dev::AppConfig::default()
                 }))
                 .tcp()

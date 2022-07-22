@@ -1,6 +1,7 @@
 use std::env;
 use std::fs::File;
 use std::io::Write;
+use std::slice::from_raw_parts;
 
 use spiral_rs::server::*;
 use spiral_rs::util::*;
@@ -21,14 +22,13 @@ fn main() {
     
     let params = &base_params;
 
-    let mut inp_file = File::open(inp_db_path).unwrap();
+    let db = load_db_from_seek(params, inp_db_path);
 
-    let db = load_db_from_seek(params, &mut inp_file);
-    let db_slice = db.as_slice();
+    println!("Done preprocessing. Outputting...");
 
     let mut out_file = File::create(out_db_path).unwrap();
-    for i in 0..db.len() {
-        let coeff = db_slice[i];
-        out_file.write_all(&coeff.to_ne_bytes()).unwrap();
-    }
+    let output_as_u8_slice = unsafe {
+        from_raw_parts(db.as_ptr() as *const u8, db.len() * 8)
+    };
+    out_file.write_all(output_as_u8_slice).unwrap();
 }
