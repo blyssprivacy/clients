@@ -38,6 +38,9 @@
           <span class="label">Balance:</span>
           <span id="output" class="address-data"></span>
         </div>
+        <div class="currentasof">
+
+        </div>
       </div>
       
       <div class="sidebar">
@@ -49,15 +52,20 @@
           <h2>What is this?</h2>
           <p>
             This is a page is a demo of private Bitcoin address balance lookup using PIR built on homomorphic encryption.
-            This demo allows private access to all non-zero Bitcoin address balances as of July 9th, 2022. 
-            We use a data dumps from
-            <a href="http://addresses.loyce.club/">this helpful site</a>, so our data is only updated roughly daily.
-            In theory, even if the server is malicious, it will be unable to learn which addresses you look up.
+            This demo allows private access to all non-zero Bitcoin address confirmed
+            balances on a roughly ~10 minute cadence.
           </p>
           <p>
             The scheme used is outlined in our paper 
-            <a href="https://eprint.iacr.org/2022/368.pdf">"Spiral: Fast, High-Rate Single-Server PIR via FHE Composition"</a>. 
+            <a href="https://eprint.iacr.org/2022/368.pdf">"Spiral: Fast, High-Rate Single-Server PIR via FHE Composition"</a> (joint work with Prof. David Wu at UT Austin). 
             The code for our system is available <a href="https://github.com/menonsamir/spiral-rs">here</a>.
+          </p>
+
+          <h2>Can I get API access?</h2>
+          <p>
+            We are working on building an API to enable fully metadata-private applications
+            like wallets and block explorers. 
+            Email us at <a href="mailto:menon.samir@gmail.com">menon.samir@gmail.com</a>.
           </p>
 
           <h2>What costs are associated with running the demo?</h2>
@@ -70,13 +78,6 @@
           <p>
             No! This is research-quality software built for demonstration purposes; it is not intended to be 
             side-channel resistant and has not undergone any kind of security review. Don't use this code in production.
-          </p>
-
-          <h2>Who made this demo?</h2>
-          <p>
-            <a href="https://samirmenon.com">Samir Menon</a>, a (currently) independent researcher in PIR and lattice-based cryptography. 
-            Please contact me with any questions, comments, and sugggestions at <a href="menon.samir@gmail.com">menon.samir@gmail.com</a>.
-            The underlying scheme is a joint work with Prof. David Wu at UT Austin.
           </p>
           </div>
       </div>

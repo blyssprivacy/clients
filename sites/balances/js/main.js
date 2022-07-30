@@ -162,6 +162,30 @@ async function resultToHtml(result, title) {
     return balanceBtcStr + " BTC (" + balanceSats.toString() + " sat)";
 }
 
+function parseLastUpdated(lastUpdated) {
+    let parts = lastUpdated.split(",");
+    let blockHeight = parts[0];
+    let date = (new Date(parts[1])).toLocaleString()
+    return "Current as of block " + blockHeight + " (" + date + ")";
+}
+
+async function updateLastUpdated() {
+    var myHeaders = new Headers();
+    myHeaders.append('pragma', 'no-cache');
+    myHeaders.append('cache-control', 'no-cache');
+
+    var myInit = {
+        method: 'GET',
+        headers: myHeaders,
+    };
+
+    var myRequest = new Request("info/lastupdated.txt");
+
+    let lastUpdated = await (await fetch(myRequest, myInit)).text();
+    document.querySelector(".currentasof").innerHTML
+        = parseLastUpdated(lastUpdated);
+}
+
 function startLoading(message, hasProgress) {
     window.loading = true;
     window.started_loading = Date.now();
@@ -299,6 +323,8 @@ async function query(targetIdx, title) {
     let outputArea = document.getElementById("output");
     outputArea.innerHTML = resultHtml;
 
+    await updateLastUpdated();
+
     stopLoading("Loading");
 }
 
@@ -326,6 +352,8 @@ async function run() {
     document.querySelector(".sidebar-collapse-btn").onclick = () => {
         document.querySelector(".sidebar").classList.toggle("collapsed");
     }
+
+    await updateLastUpdated();
 
     startLoading("Setting up client");
     let setupClientResult = setUpClient();

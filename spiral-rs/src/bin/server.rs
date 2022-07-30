@@ -72,7 +72,7 @@ async fn reload<'a>(
 
     let mut file = File::open(data.fname.clone()).unwrap();
     let now = Instant::now();
-    load_file(db_data, &mut file);
+    load_file_unsafe(db_data, &mut file);
     Ok(format!(
         "{{\"status\":\"done reloading\", \"loading_time_ms\":{}}}",
         now.elapsed().as_millis()
