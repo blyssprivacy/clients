@@ -277,7 +277,7 @@ async function setUpClient() {
         console.log("No state stored, generating new client state")
         let key = new Uint8Array(KEY_SIZE);
         self.crypto.getRandomValues(key, true);
-        setStateFromKey(key);
+        setStateFromKey(key, true);
         return false;
     }
 }
