@@ -159,7 +159,7 @@ async function resultToHtml(result, title) {
 
     let balanceBtcStr = balanceBtcFloat.toLocaleString("en-US");
 
-    return balanceBtcStr + " BTC (" + balanceSats.toString() + " sat)";
+    return balanceBtcStr + " BTC ($" + getUSD(balanceBtcFloat) + " USD, " + balanceSats.toString() + " sat)";
 }
 
 function parseLastUpdated(lastUpdated) {
@@ -169,7 +169,7 @@ function parseLastUpdated(lastUpdated) {
     return "Current as of block " + blockHeight + " (" + date + ")";
 }
 
-async function updateLastUpdated() {
+async function updateInfo() {
     var myHeaders = new Headers();
     myHeaders.append('pragma', 'no-cache');
     myHeaders.append('cache-control', 'no-cache');
@@ -184,6 +184,14 @@ async function updateLastUpdated() {
     let lastUpdated = await (await fetch(myRequest, myInit)).text();
     document.querySelector(".currentasof").innerHTML
         = parseLastUpdated(lastUpdated);
+
+    var myRequest = new Request("info/btcconversionrate.json");
+
+    window.usdPerBtc = (await (await fetch(myRequest, myInit)).json())["price"];
+}
+
+function getUSD(btcVal) {
+    return window.usdPerBtc * btcVal;
 }
 
 function startLoading(message, hasProgress) {
@@ -252,7 +260,7 @@ function setStateFromKey(key, shouldGeneratePubParams) {
     console.log("done");
     console.log("Generating public parameters...");
     window.publicParameters = generate_keys(window.client, key, shouldGeneratePubParams);
-    console.log(`done (${publicParameters.length} bytes)`);
+    if (window.publicParameters) console.log(`done (${publicParameters.length} bytes)`);
 }
 
 async function isStateValid(state) {
@@ -323,7 +331,7 @@ async function query(targetIdx, title) {
     let outputArea = document.getElementById("output");
     outputArea.innerHTML = resultHtml;
 
-    await updateLastUpdated();
+    await updateInfo();
 
     stopLoading("Loading");
 }
@@ -353,7 +361,7 @@ async function run() {
         document.querySelector(".sidebar").classList.toggle("collapsed");
     }
 
-    await updateLastUpdated();
+    await updateInfo();
 
     startLoading("Setting up client");
     let setupClientResult = setUpClient();

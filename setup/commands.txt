@@ -1,0 +1,13 @@
+
+# to update the site
+sudo cp -a ~/spiral-rs/sites/balances/. /var/www/html/balances/
+
+# build the server
+cargo build --release --bin server --features server
+
+# build the client
+wasm-pack build --target web --out-dir ../sites/balances/pkg
+
+
+# to update the service
+sudo cp spiral-balance.service /etc/systemd/system/spiral-balance.service
