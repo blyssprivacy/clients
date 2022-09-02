@@ -1,0 +1,205 @@
+/* @import url('https://rsms.me/inter/inter.css');
+html { font-family: 'Inter', sans-serif; } */
+
+* {
+  box-sizing: border-box;
+}
+body {
+  max-width: 1280px;
+  margin: auto;
+
+  padding-top: 20px;
+
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  row-gap: 20px;
+}
+
+.topframe {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  width: 100%;
+  column-gap: 100px;
+}
+
+.logopitch {
+  width: 400px;
+  font-family: Inter;
+  
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  column-gap: 10px;
+}
+
+.brandname {
+  color: rgba(103,38,103,1);
+  font-weight: 600;
+  font-size: 56px;
+}
+.brandsub {
+  color: rgba(0,0,0,1);
+  font-weight: 300;
+  font-size: 32px;
+}
+
+.pitchhead {
+  padding-top: 40px;
+  color: rgba(0,0,0,1);
+  font-weight: 400;
+  font-size: 48px;
+}
+.pitchbody {
+  padding-top: 30px;
+  color: rgba(0,0,0,1);
+  font-weight: 300;
+  font-size: 24px;
+}
+
+
+.resultcard {
+  width: 600px;
+  height: 300px;
+  margin-top: 50px;
+  background: rgba(86,87,89,1);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+.btcaddressbar {
+  width: 600px;
+  height: 60px;
+  background: rgba(245,245,245,1);
+  border: 2px solid rgba(86,87,89,1);
+  border-radius: 20px;
+  display: flex;
+}
+.btcaddressline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(0,0,0,1);
+  padding-left: 20px;
+  padding-right: 10px;
+  font-family: Inconsolata;
+  font-weight: 400;
+  font-size: 24px;
+  width: 100%;
+}
+.purplecircle {
+  width: 40px;
+  height: 40px;
+  background: rgba(103,38,103,1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.whitearrow {
+  color: rgba(255,255,255,1);
+  text-align: center;
+}
+
+.resultline {
+  width: 100%;
+  padding-left: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: rgba(255,255,255,1);
+  font-family: Inconsolata;
+  font-weight: 300;
+  font-size: 24px;
+}
+
+.resultcolA {
+  min-width: 200px;
+}
+.resultcolB {
+  min-width: 200px;
+}
+.resultcolC {
+  min-width: 200px;
+}
+
+.infocards {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  row-gap: 20px;
+}
+
+.infobox {
+  width: 400px;
+  height: 360px;
+  background: rgba(245,245,245,1);
+  border-radius: 20px;
+  font-family: Inter;
+  padding-top: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+}
+.infohead {
+  color: rgba(103,38,103,1);
+  font-size: 36px;
+  font-weight: 400;
+  min-height: 120px;
+}
+.infobody {
+  color: rgba(0,0,0,1);
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.ctabox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 20px;
+
+  font-family: Inter;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  width: 50%;
+  background: rgba(245,245,245,1);
+  border-radius: 20px;
+}
+
+.emailbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Inconsolata;
+  font-size: 24px;
+  width: 80%;
+  height: 60px;
+  background: rgba(245,245,245,1);
+  border: 2px solid rgba(86,87,89,1);
+  border-radius: 20px;
+}

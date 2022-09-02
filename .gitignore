@@ -1,3 +1,4 @@
 target/
 *.gz
 *.dat
+*.DS_Store
