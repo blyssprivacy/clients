@@ -13,6 +13,12 @@ const QUERY_URL = "/query";
 const AMOUNT_SIZE = 8;
 const ADDR_HASH_SIZE = 8;
 const DATUM_SIZE = ADDR_HASH_SIZE + AMOUNT_SIZE;
+const MAX_TXNS = 5;
+const NUM_TXN_SIZE = 1;
+const HEIGHT_SIZE = 4;
+const TXN_SIZE = HEIGHT_SIZE + AMOUNT_SIZE;
+
+const MAX_BTC = 21e14;
 const SAT_IN_BTC = BigInt("100000000");
 
 const TARGET_NUM = 14;
@@ -133,20 +139,71 @@ async function getAddressInfo(address) {
     return {"hash": hash, "bucket": bucket};
 }
 
+function getTxns(dv, offset) {
+    // read until we get an address
+    let numTxns = dv.getUint8(offset, true);
+    let txns = [];
+    for (let i = 0; i < numTxns; i++) {
+        let idx = offset + NUM_TXN_SIZE + i * TXN_SIZE;
+        if (idx + 4 > dv.byteLength) throw "bad 1";
+        let candBlockHeight = dv.getUint32(idx, true);
+        if (candBlockHeight > window.blockHeight) throw "bad 2";
+        if (idx + HEIGHT_SIZE + 8 > dv.byteLength) break;
+        let amount = dv.getBigUint64(idx + HEIGHT_SIZE, true);
+        if (amount > MAX_BTC) throw "bad 3";
+        txns.push({"height": candBlockHeight, "amount": amount})
+    }
+    if (txns.length == 0) throw "bad 4";
+    txns.sort((x,y) => {return y.height - x.height});
+    return txns;
+}
+
+window.USD_FORMATTER = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});  
+
+function amountToString(amountSats) {
+    let amount = Number(amountSats) / Number(SAT_IN_BTC);
+
+    return amount.toLocaleString("en-US") 
+        + " BTC (" 
+        + window.USD_FORMATTER.format(getUSD(amount)) 
+        + " USD, " 
+        + amountSats.toString() 
+        + " sat)";
+}
+
+function txnToString(txn) {
+    return "In block " + txn.height + ", got " + amountToString(txn.amount);
+}
+
 async function resultToHtml(result, title) {
     let addressHash = new Uint8Array((await getAddressInfo(title)).hash);
+    let output;
+    try {
+      output = pako.inflate(result);
+    } catch (err) {
+      console.log(err);
+      return "Error retrieving balance for this address.";
+    }
 
-    let data = {};
+    // let data = {};
     let matches = 0;
     let balanceSats = 0;
-    let dv = new DataView(result.buffer);
-    for (let i = 0; i < result.length; i += DATUM_SIZE) {
-        let candidateAddr = result.slice(i, i + ADDR_HASH_SIZE);
+    let txns;
+    let dv = new DataView(output.buffer);
+    let i = 0; 
+    while (i < output.length) {
+        let candidateAddr = output.slice(i, i + ADDR_HASH_SIZE);
+        let candidateTxns = getTxns(dv, i + ADDR_HASH_SIZE + AMOUNT_SIZE);
         if (candidateAddr.every((v,i)=> v === addressHash[i])) {
             matches += 1;
             balanceSats = dv.getBigUint64(i + ADDR_HASH_SIZE, true);
+            txns = candidateTxns;
         }
-        data[getHexFromHash(candidateAddr)] = dv.getBigUint64(i + ADDR_HASH_SIZE, true).toString();
+        i += ADDR_HASH_SIZE + AMOUNT_SIZE + NUM_TXN_SIZE + candidateTxns.length * TXN_SIZE;
+        // data[getHexFromHash(candidateAddr)] = dv.getBigUint64(i + ADDR_HASH_SIZE, true).toString();
     }
 
     if (matches == 0) {
@@ -155,16 +212,16 @@ async function resultToHtml(result, title) {
         return "Error retrieving balance for this address.";
     }
 
-    let balanceBtcFloat = Number(balanceSats) / Number(SAT_IN_BTC);
+    let balanceString = amountToString(balanceSats);
+    let txnString = '<ul class="txnlist">' + txns.map(txnToString).map((x) => "<li>"+x+"</li>").join("\n") + "</ul>"; 
 
-    let balanceBtcStr = balanceBtcFloat.toLocaleString("en-US");
-
-    return balanceBtcStr + " BTC ($" + getUSD(balanceBtcFloat) + " USD, " + balanceSats.toString() + " sat)";
+    return '<div class="balance">'+balanceString+'</div>\n<div class="txns">Recent transactions:\n'+txnString+'</div>';
 }
 
 function parseLastUpdated(lastUpdated) {
     let parts = lastUpdated.split(",");
     let blockHeight = parts[0];
+    window.blockHeight = parseInt(blockHeight);
     let date = (new Date(parts[1])).toLocaleString()
     return "Current as of block " + blockHeight + " (" + date + ")";
 }
