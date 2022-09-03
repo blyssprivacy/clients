@@ -25,20 +25,17 @@
         <div class="resultcard">
             <div class="btcaddressbar">
                 <div class="btcaddressline">
-                    <div>BTC address (1..., 3..., bc1...)</div>
+                    <div><input type="text" id="searchbox" placeholder="BTC address (1…, 3…, bc1…)"/></div>
                     <div class="purplecircle">
-                        <div class="whitearrow">></div>
+                        <input id="make_query" type="button" class="whitearrow" value="&gt;" />
                     </div>
                 </div>
             </div>
             <div class="resultline">
-                <div class="resultcolA">Current Balance</div>
-                <div class="resultcolB">&nbsp;1.2289 BTC</div>
-                <div class="resultcolC">($24,410)</div>
+                <span id="output" class="address-data"></span>
             </div>
-            <div class="resultline">
-                as of 2022-09-01, 11:37. Recent UTXOs:
-            </div><div></div>
+            <div class="resultline" id="currentasof">as of 2022-09-01, 11:37.</div>
+            <div class="resultline">Recent UTXOs:</div>
             <div class="resultline">
                 <div class="resultcolA">Block 749357</div>
                 <div class="resultcolB">+1.0000 BTC</div>
@@ -89,6 +86,8 @@
     </div>
     <div></div>
     <div></div>
+    <script src="js/pako.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>
