@@ -194,6 +194,7 @@ async fn main() -> std::io::Result<()> {
 
     let mut file = File::open(db_preprocessed_path).unwrap();
     let db = load_preprocessed_db_from_file(params, &mut file);
+    println!("Done loading from DB.");
 
     let server_state = ServerState {
         fname: db_preprocessed_path.clone(),
@@ -237,14 +238,14 @@ async fn main() -> std::io::Result<()> {
     };
 
     Server::build()
-        .bind("http/1", format!("localhost:{}", port), move || {
+        .bind("http/1", format!("0.0.0.0:{}", port), move || {
             HttpServiceBuilder::default()
                 .h1(map_config(app_builder(), |_| {
                     actix_web::dev::AppConfig::default()
                 }))
                 .tcp()
         })?
-        .bind("http/1", format!("localhost:{}", debug_port), move || {
+        .bind("http/1", format!("0.0.0.0:{}", debug_port), move || {
             HttpServiceBuilder::default()
                 .h1(map_config(app_builder_util(), |_| {
                     actix_web::dev::AppConfig::default()
