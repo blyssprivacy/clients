@@ -9,6 +9,10 @@ const API_URL = "https://api.usespiral.com/btcv1";
 const CHECK_URL = "/check";
 const SETUP_URL = "/setup";
 const QUERY_URL = "/query";
+const BT_URL = "/block-timestamps";
+
+const BASE_BT_HEIGHT_URL = "/static/block-timestamps.json";
+const BASE_BT_HEIGHT = 753388;
 
 const AMOUNT_SIZE = 8;
 const ADDR_HASH_SIZE = 8;
@@ -111,7 +115,9 @@ async function getData(url = '', json = false) {
 const api = {
     check: async (uuid) => getData(API_URL + CHECK_URL + "?uuid="+uuid, true),
     setup: async (data) => postData(API_URL + SETUP_URL, data, true),
-    query: async (data) => postData(API_URL + QUERY_URL, data, false)
+    query: async (data) => postData(API_URL + QUERY_URL, data, false),
+    blockTimestampsBase: async () => getData(BASE_BT_HEIGHT_URL, true),
+    blockTimestampsLive: async () => getData(API_URL + BT_URL, true)
 }
 
 async function sha256Trunc(message) {
@@ -200,13 +206,49 @@ function amountToString(amountSats, symbol) {
         + '</'+el+'>';
 }
 
+window.relTimeFormatter = new Intl.RelativeTimeFormat('en', { style: 'long' });
+
+function getRelativeTime(d) {
+    let units = {
+        year  : 24 * 60 * 60 * 1000 * 365,
+        month : 24 * 60 * 60 * 1000 * 365/12,
+        day   : 24 * 60 * 60 * 1000,
+        hour  : 60 * 60 * 1000,
+        minute: 60 * 1000,
+        second: 1000
+    };
+
+    var elapsed = d - new Date();
+    
+    for (var u in units) 
+      if (Math.abs(elapsed) > units[u] || u == 'second') 
+        return window.relTimeFormatter.format(Math.round(elapsed/units[u]), u)
+}
+
 function txnToString(txn) {
-    // return "In block " + txn.height + ", got " + amountToString(txn.amount);
-    // return amountToString(txn.amount) + " in block " + txn.height;
+    let timeStr;
+    if (window.blockTimestamps && window.blockTimestamps[txn.height]) {
+        let timestamp = window.blockTimestamps[txn.height];
+        let d = new Date(timestamp * 1000);
+        let relTimeStr = getRelativeTime(d);
+        timeStr = '<span class="relative-time-detail" '
+            + 'title="'
+            + d.toLocaleString()
+            + '">' 
+            + relTimeStr 
+            + '</span>'
+            + '<span class="height-detail">'
+            + " (block " 
+            + txn.height 
+            + ")"
+            + '</span>';
+    } else {
+        timeStr = "Block " + txn.height;
+    }
+
     return '<div class="txn platter">'
         + '<div class="description">'
-        + 'Block '
-        + txn.height
+        + timeStr
         + '</div>'
         + '<div class="result">'
         + amountToString(txn.amount, "+") + 
@@ -464,10 +506,26 @@ async function queryTitle(targetTitle) {
     return await query(bucket, targetTitle);
 }
 
+function processBTBaseArray(btArray) {
+    let mapping = {};
+    let current = 0;
+    for (let i = 0; i < btArray.length; i++) {
+        let delta = btArray[i];
+        current += delta;
+        mapping[i] = current;
+    }
+    
+    return mapping;
+}
+
 async function run() {
     startLoading("Initializing");
     await init();
     stopLoading("Initializing");
+
+    api.blockTimestampsBase().then((res) => {
+        window.blockTimestamps = processBTBaseArray(res);
+    });
 
     window.numArticles = 1 << TARGET_NUM;
     window.articleSize = ITEM_SIZE;

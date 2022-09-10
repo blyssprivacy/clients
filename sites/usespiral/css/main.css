@@ -333,6 +333,10 @@ body {
   padding-right: 4px;
 }
 
+.height-detail {
+  color: #666;
+}
+
 @media (max-width: 1280px) {
   body {
     padding: 20px 15px 20px;
