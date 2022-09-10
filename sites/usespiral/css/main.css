@@ -155,6 +155,10 @@ body {
   min-height: 120px;
 }
 
+.infohead.compact {
+  min-height: 0;
+}
+
 .infobody {
   color: rgba(0,0,0,1);
   font-size: 24px;
@@ -324,6 +328,10 @@ body {
 .search-container {
   flex-grow: 1;
   padding: 0 12px;
+}
+
+.brand-img {
+  padding-right: 4px;
 }
 
 @media (max-width: 1280px) {

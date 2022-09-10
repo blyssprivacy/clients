@@ -6,12 +6,15 @@
     <link rel="icon" type="image/x-icon" href="favicon.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SpiralBTC</title>
+
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-eval' 'wasm-eval' https://api.usespiral.com;">
 </head>
 
 <body>
     <div class="topframe">
         <div class="logo">
-            <span class="brandname"><img src="favicon.svg" height="48px" style="padding-right: 4px" alt="Spiral Logo">Spiral</span>
+            <span class="brandname"><img src="favicon.svg" height="48px" class="brand-img" alt="Spiral Logo">Spiral</span>
             <span class="brandsub">for BTC</span>
         </div>
         <div class="main-header">
@@ -51,7 +54,7 @@
         <div class="infobox">
             <div class="infohead">The ultimate in BTC privacy.</div>
             <div class="infobody">All
-                information about the addresses you look up stays on your device. The Spiral server learns absolutely nothing your queries.</div>
+                information about the addresses you look up stays on your device. The Spiral server learns absolutely nothing about your queries.</div>
         </div>
         <div class="infobox">
             <div class="infohead">Trust no one.</div>
@@ -69,7 +72,7 @@
     </div>
 
     <div class="ctabox">
-        <div class="infohead" style="min-height: 0">Use Spiral. For free. For now.</div>
+        <div class="infohead compact">See what's coming next.</div>
         <div class="infobody">We're
             building more features, like Ledger compatibility, private transaction lookup, and more. Help us test,
             and we'll give you forever free access.</div>
@@ -83,7 +86,7 @@
             </div>
         </div>
         <div class="infobody">Want to use our private database for
-            something else? Let's talk! <a href="mailto:founders@spiraldb.xyz">founders@spiraldb.xyz</a></div>
+            something else? Let's talk! <a href="mailto:founders@usespiral.com">founders@usespiral.com</a></div>
     </div>
     <script src="js/pako.js"></script>
     <script type="module" src="js/main.js"></script>
