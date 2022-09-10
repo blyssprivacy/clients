@@ -5,7 +5,7 @@ import init, {
     decode_response
 } from '../pkg/client.js';
 
-const API_URL = "/balances/api";
+const API_URL = "https://api.usespiral.com/btcv1";
 const CHECK_URL = "/check";
 const SETUP_URL = "/setup";
 const QUERY_URL = "/query";
@@ -236,15 +236,14 @@ async function updateInfo() {
         headers: myHeaders,
     };
 
-    var myRequest = new Request("info/lastupdated.txt");
+    var myRequest = new Request(API_URL + "/info");
 
     let lastUpdated = await (await fetch(myRequest, myInit)).text();
-    document.querySelector(".currentasof").innerHTML
+    document.getElementById("currentasof").innerHTML
         = parseLastUpdated(lastUpdated);
 
-    var myRequest = new Request("info/btcconversionrate.json");
 
-    window.usdPerBtc = (await (await fetch(myRequest, myInit)).json())["price"];
+    window.usdPerBtc = (await (await fetch(myRequest, myInit)).json())["data"];
 }
 
 function getUSD(btcVal) {
@@ -252,6 +251,7 @@ function getUSD(btcVal) {
 }
 
 function startLoading(message, hasProgress) {
+    return
     window.loading = true;
     window.started_loading = Date.now();
     if (hasProgress) {
@@ -267,6 +267,7 @@ function startLoading(message, hasProgress) {
 }
 
 function stopLoading(message) {
+    return
     window.loading = false;
     document.querySelector(".loading-icon").classList.add("hidden");
     let seconds = (Date.now() - window.started_loading) / 1000
@@ -412,13 +413,13 @@ async function run() {
     window.numArticles = 1 << TARGET_NUM;
     window.articleSize = ITEM_SIZE;
 
-    let makeQueryBtn = document.querySelector('#make_query');
-    let searchBox = document.querySelector(".searchbox");
-    document.querySelector(".sidebar-collapse-btn").onclick = () => {
-        document.querySelector(".sidebar").classList.toggle("collapsed");
-    }
+    let makeQueryBtn = document.getElementById('make_query');
+    let searchBox = document.getElementById("searchbox");
+    // document.querySelector(".sidebar-collapse-btn").onclick = () => {
+    //     document.querySelector(".sidebar").classList.toggle("collapsed");
+    // }
 
-    await updateInfo();
+    // await updateInfo();
 
     startLoading("Setting up client");
     let setupClientResult = setUpClient();
@@ -443,6 +444,7 @@ async function run() {
 run();
 
 function setProgress(progress) {
+    return
     document.querySelector(".progress").style.background =
         "conic-gradient(#333 " +
         progress +
