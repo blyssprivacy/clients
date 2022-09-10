@@ -229,7 +229,7 @@ function txnToString(txn) {
     let timeStr;
     if (window.blockTimestamps && window.blockTimestamps[txn.height]) {
         let timestamp = window.blockTimestamps[txn.height];
-        let d = new Date(timestamp * 1000);
+        let d = new Date(timestamp);
         let relTimeStr = getRelativeTime(d);
         timeStr = '<span class="relative-time-detail" '
             + 'title="'
@@ -338,6 +338,8 @@ async function updateInfo() {
         = parseLastUpdated(data);
 
     window.usdPerBtc = parseFloat(data["price"]);
+
+    processBTUpdateArray(await api.blockTimestampsLive());
 }
 
 function getUSD(btcVal) {
@@ -512,10 +514,16 @@ function processBTBaseArray(btArray) {
     for (let i = 0; i < BASE_BT_HEIGHT; i++) {
         let delta = btArray[i];
         current += delta;
-        mapping[i] = current;
+        mapping[i] = current * 1000;
     }
     
     return mapping;
+}
+
+function processBTUpdateArray(btArray) {
+    for (let i = 0; i < btArray.length; i++) {
+        window.blockTimestamps[i + BASE_BT_HEIGHT] = btArray[i] * 1000;
+    }
 }
 
 async function run() {
