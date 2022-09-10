@@ -10,40 +10,40 @@
 
 <body>
     <div class="topframe">
-        <div class="logopitch">
-            <div class="logo">
-                <span class="brandname"><img src="favicon.svg" height="48px" style="padding-right: 4px" alt="Spiral Logo">Spiral</span>
-                <span class="brandsub">for BTC</span>
-            </div>
-            <div class="pitch">
-                <div class="pitchhead">Count your coins, privately.</div>
-                <div class="pitchbody">Check any BTC address balance, without revealing your address to anyone -- not even us.
-                </div>
-            </div>
+        <div class="logo">
+            <span class="brandname"><img src="favicon.svg" height="48px" style="padding-right: 4px" alt="Spiral Logo">Spiral</span>
+            <span class="brandsub">for BTC</span>
         </div>
-        <div class="resultcard">
-            <div class="btcaddressbar">
-                <div class="btcaddressline">
-                    <div><input type="text" id="searchbox" placeholder="BTC address (1…, 3…, bc1…)"/></div>
-                    <div class="purplecircle">
-                        <input id="make_query" type="button" class="whitearrow" value="&gt;" />
+        <div class="main-header">
+            <div class="pitch-container">
+                <div class="pitch">
+                    <div class="pitchhead">Count your coins, privately.</div>
+                    <div class="pitchbody">Look up any BTC address balance, without revealing the address to anyone – not even us.
                     </div>
                 </div>
             </div>
-            <div class="resultline">
-                <span id="output" class="address-data"></span>
-            </div>
-            <div class="resultline" id="currentasof">as of 2022-09-01, 11:37.</div>
-            <div class="resultline">Recent UTXOs:</div>
-            <div class="resultline">
-                <div class="resultcolA">Block 749357</div>
-                <div class="resultcolB">+1.0000 BTC</div>
-                <div class="resultcolC">($19,863)</div>
-            </div>
-            <div class="resultline">
-                <div class="resultcolA">Block 701556</div>
-                <div class="resultcolB">+0.2289 BTC</div>
-                <div class="resultcolC">&nbsp;($4,547)</div>
+            <div class="active-area">
+                <div class="resultcard collapsed">
+                    <div class="btcaddressbar">
+                        <div class="btcaddressline">
+                            <div class="search-container">
+                                <input type="text" id="searchbox" placeholder="BTC address (1…, 3…, bc1…)"/>
+                            </div>
+                            <div class="purplecircle">
+                                <input id="make_query" type="button" class="whitearrow" value="→" />
+                                <div class="loading">
+                                    <div class="progress off"><div></div></div>
+                                    <div class="loading-icon off la-ball-clip-rotate la-sm"><div></div></div>
+                                    <div class="message inprogress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-area">
+                        <div id="output" class="address-data"></div>
+                        <div class="off" id="currentasof"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -51,14 +51,12 @@
         <div class="infobox">
             <div class="infohead">The ultimate in BTC privacy.</div>
             <div class="infobody">All
-                information about your wallet stays on your device. The Spiral server learns absolutely nothing about
-                you or your addresses.</div>
+                information about the addresses you look up stays on your device. The Spiral server learns absolutely nothing your queries.</div>
         </div>
         <div class="infobox">
-            <div class="infohead">Trusts no one.</div>
+            <div class="infohead">Trust no one.</div>
             <div class="infobody">When you use a public
-                block explorer, you're associating your identity with your money, inviting phishing attacks. You don't
-                need to trust Spiral -- we <i>can't</i> be evil.</div>
+                block explorer, you're associating your identity with your money, inviting phishing attacks. Why give away information you don't have to?</div>
         </div>
         <div class="infobox">
             <div class="infohead">Built on strong cryptography.</div>
@@ -71,16 +69,21 @@
     </div>
 
     <div class="ctabox">
-        <div class="infohead" style="min-height: 0">Use Spiral as your BTC wallet.</div>
-        <div class="infobody">We’re
+        <div class="infohead" style="min-height: 0">Use Spiral. For free. For now.</div>
+        <div class="infobody">We're
             building more features, like Ledger compatibility, private transaction lookup, and more. Help us test,
-            and we’ll give you forever free access.</div>
+            and we'll give you forever free access.</div>
         <div class="emailbox">
-            <div>email address</div>
-            <div>></div>
+            <div class="search-container">
+                <input type="text" class="email-inp" placeholder="email address"/>
+            </div>
+            <!-- <div>></div> -->
+            <div class="purplecircle">
+                <input type="button" class="whitearrow" value="→" />
+            </div>
         </div>
         <div class="infobody">Want to use our private database for
-            something else? Let's talk! founders@spiraldb.xyz</div>
+            something else? Let's talk! <a href="mailto:founders@spiraldb.xyz">founders@spiraldb.xyz</a></div>
     </div>
     <script src="js/pako.js"></script>
     <script type="module" src="js/main.js"></script>

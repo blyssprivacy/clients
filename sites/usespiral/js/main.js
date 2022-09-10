@@ -163,19 +163,71 @@ window.USD_FORMATTER = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });  
 
-function amountToString(amountSats) {
+function amountToString(amountSats, symbol) {
+    if (!symbol) symbol = "";
+    let el = "div";
     let amount = Number(amountSats) / Number(SAT_IN_BTC);
+    let btcOpts = {
+        trailingZeroDisplay: "stripIfInteger",
+        maximumFractionDigits: 2
+    };
 
-    return amount.toLocaleString("en-US") 
-        + " BTC (" 
-        + window.USD_FORMATTER.format(getUSD(amount)) 
-        + " USD, " 
+    if (amount < 1.0) {
+        btcOpts = {
+            trailingZeroDisplay: "stripIfInteger",
+            minimumSignificantDigits: 1
+        }
+    }
+
+    return '<'+el+' class="primary" '
+        + 'title="'
         + amountSats.toString() 
-        + " sat)";
+        + " sat"
+        + '"'
+        + '>' 
+        + '<span class="number good">'
+        + symbol
+        + amount.toLocaleString("en-US", btcOpts) 
+        + '</span>'
+        + ' BTC'
+        + '</'+el+'> '
+        + '<'+el+' class="secondary">' 
+        + '(' 
+        + '<span class="number good">'
+        + window.USD_FORMATTER.format(getUSD(Number(amount))) 
+        + '</span>'
+        + ')' 
+        + '</'+el+'>';
 }
 
 function txnToString(txn) {
-    return "In block " + txn.height + ", got " + amountToString(txn.amount);
+    // return "In block " + txn.height + ", got " + amountToString(txn.amount);
+    // return amountToString(txn.amount) + " in block " + txn.height;
+    return '<div class="txn platter">'
+        + '<div class="description">'
+        + 'Block '
+        + txn.height
+        + '</div>'
+        + '<div class="result">'
+        + amountToString(txn.amount, "+") + 
+        '</div>' +
+        '</div>';
+}
+
+function wrapBalance(balanceString) {
+    return '<div class="balance platter main">'
+        + '<div class="description">Balance</div>'
+        + '<div class="result">'
+        + balanceString + 
+        '</div>' +
+        '</div>';
+}
+
+function wrapTxns(txnString) {
+    return '<div class="txns">'
+        +'<div class="platter caption">Recent transactions:</div>\n'
+        + txnString + 
+        '</div>';
 }
 
 async function resultToHtml(result, title) {
@@ -213,17 +265,18 @@ async function resultToHtml(result, title) {
     }
 
     let balanceString = amountToString(balanceSats);
-    let txnString = '<ul class="txnlist">' + txns.map(txnToString).map((x) => "<li>"+x+"</li>").join("\n") + "</ul>"; 
+    let txnString = '<div class="txnlist">' + txns.map(txnToString).join("\n") + "</div>"; 
 
-    return '<div class="balance">'+balanceString+'</div>\n<div class="txns">Recent transactions:\n'+txnString+'</div>';
+    return wrapBalance(balanceString) + '\n' + wrapTxns(txnString);
+    
 }
 
-function parseLastUpdated(lastUpdated) {
-    let parts = lastUpdated.split(",");
-    let blockHeight = parts[0];
+function parseLastUpdated(data) {
+    let lastUpdated = data["lastupdate"];
+    let blockHeight = data["height"];
     window.blockHeight = parseInt(blockHeight);
-    let date = (new Date(parts[1])).toLocaleString()
-    return "as of block " + blockHeight + " (" + date + ")";
+    let date = (new Date(lastUpdated)).toLocaleString()
+    return "Current as of block " + blockHeight + " (" + date + ")";
 }
 
 async function updateInfo() {
@@ -237,13 +290,12 @@ async function updateInfo() {
     };
 
     var myRequest = new Request(API_URL + "/info");
+    let data = (await (await fetch(myRequest, myInit)).json());
 
-    let lastUpdated = await (await fetch(myRequest, myInit)).text();
     document.getElementById("currentasof").innerHTML
-        = parseLastUpdated(lastUpdated);
+        = parseLastUpdated(data);
 
-
-    window.usdPerBtc = (await (await fetch(myRequest, myInit)).json())["data"];
+    window.usdPerBtc = parseFloat(data["price"]);
 }
 
 function getUSD(btcVal) {
@@ -251,29 +303,31 @@ function getUSD(btcVal) {
 }
 
 function startLoading(message, hasProgress) {
-    return
     window.loading = true;
     window.started_loading = Date.now();
+    document.querySelector("#make_query").classList.add("off");
     if (hasProgress) {
         document.querySelector(".progress").classList.remove("off");
         document.querySelector(".loading-icon").classList.add("off");
     } else {
         document.querySelector(".progress").classList.add("off");
         document.querySelector(".loading-icon").classList.remove("off");
-        document.querySelector(".loading-icon").classList.remove("hidden");
     }
-    document.querySelector(".loading .message").innerHTML = message+"...";
+    // document.querySelector(".loading .message").innerHTML = message+"...";
     document.querySelector(".loading .message").classList.add("inprogress");
 }
 
+window.startLoading = startLoading;
+
 function stopLoading(message) {
-    return
     window.loading = false;
-    document.querySelector(".loading-icon").classList.add("hidden");
+    document.querySelector(".loading-icon").classList.add("off");
+    document.querySelector("#make_query").classList.remove("off");
     let seconds = (Date.now() - window.started_loading) / 1000
     let secondsRounded = Math.round(seconds * 100) / 100;
     let timingMessage = secondsRounded > 0.01 ? (" Took "+secondsRounded+"s.") : "";
-    document.querySelector(".loading .message").innerHTML = "Done " + message.toLowerCase() + "." + timingMessage;
+    console.log("Done " + message.toLowerCase() + "." + timingMessage)
+    // document.querySelector(".loading .message").innerHTML = "Done " + message.toLowerCase() + "." + timingMessage;
     document.querySelector(".loading .message").classList.remove("inprogress");
 }
 
@@ -354,7 +408,7 @@ async function uploadState() {
     let setup_resp = await api.setup(window.publicParameters);
     console.log("sent.");
     let id = setup_resp["id"];
-    stopLoading("Uploading setup data");
+    // stopLoading("Uploading setup data");
     await storeState(window.key, id);
     return id;
 }
@@ -367,6 +421,7 @@ async function query(targetIdx, title) {
         window.id = id;
     }
 
+    stopLoading("");
     startLoading("Loading");
     console.log("Generating query... ("+targetIdx+")");
     let query = generate_query(window.client, window.id, targetIdx);
@@ -390,6 +445,10 @@ async function query(targetIdx, title) {
     outputArea.innerHTML = resultHtml;
 
     await updateInfo();
+
+    document.getElementById("currentasof").classList.remove("off");
+
+    document.querySelector(".resultcard").classList.remove("collapsed")
 
     stopLoading("Loading");
 }
@@ -419,7 +478,7 @@ async function run() {
     //     document.querySelector(".sidebar").classList.toggle("collapsed");
     // }
 
-    // await updateInfo();
+    await updateInfo();
 
     startLoading("Setting up client");
     let setupClientResult = setUpClient();
@@ -444,11 +503,10 @@ async function run() {
 run();
 
 function setProgress(progress) {
-    return
     document.querySelector(".progress").style.background =
-        "conic-gradient(#333 " +
+        "conic-gradient(#fff " +
         progress +
-        "%,#fff " +
+        "%,rgba(103,38,103,1) " +
         progress +
         "%)";
 
