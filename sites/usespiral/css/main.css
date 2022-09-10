@@ -185,8 +185,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-right: 10px;
   font-family: Inter;
   font-weight: 300;
   font-size: 24px;
