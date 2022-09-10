@@ -582,3 +582,20 @@ function setProgress(progress) {
     //     progress.toString() + "%";
 }
 window.setProgress = setProgress;
+
+const handleSubmit = (e) => {
+    e.preventDefault();
+    let myForm = document.querySelector(".emailbox");
+    let formData = new FormData(myForm);
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
+    })
+      .then(() => console.log("Email successfully submitted"))
+      .catch((error) => alert(error));
+  };
+
+document
+  .querySelector("form")
+  .addEventListener("submit", handleSubmit);
