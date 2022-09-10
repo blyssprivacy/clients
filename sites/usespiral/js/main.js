@@ -301,9 +301,9 @@ async function resultToHtml(result, title) {
     }
 
     if (matches == 0) {
-        return "No balance found for this address (perhaps 0?)";
+        return '<div class="error-msg">No balance found for this address (perhaps 0?)</div>';
     } else if (matches > 1) {
-        return "Error retrieving balance for this address.";
+        return '<div class="error-msg">Error retrieving balance for this address.</div>';
     }
 
     let balanceString = amountToString(balanceSats);
@@ -509,7 +509,7 @@ async function queryTitle(targetTitle) {
 function processBTBaseArray(btArray) {
     let mapping = {};
     let current = 0;
-    for (let i = 0; i < btArray.length; i++) {
+    for (let i = 0; i < BASE_BT_HEIGHT; i++) {
         let delta = btArray[i];
         current += delta;
         mapping[i] = current;

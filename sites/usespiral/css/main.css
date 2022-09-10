@@ -337,6 +337,16 @@ body {
   color: #666;
 }
 
+.error-msg {
+  min-height: 50px;
+  padding: 20px 20px 40px;
+  font-size: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 1280px) {
   body {
     padding: 20px 15px 20px;
