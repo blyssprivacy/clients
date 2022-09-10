@@ -531,8 +531,10 @@ async function run() {
     await init();
     stopLoading("Initializing");
 
+    window.blockTimestamps = {};
+
     api.blockTimestampsBase().then((res) => {
-        window.blockTimestamps = processBTBaseArray(res);
+        Object.assign(window.blockTimestamps, processBTBaseArray(res));
     });
 
     window.numArticles = 1 << TARGET_NUM;
