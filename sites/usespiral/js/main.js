@@ -592,8 +592,17 @@ const handleSubmit = (e) => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams(formData).toString(),
     })
-      .then(() => console.log("Email successfully submitted"))
-      .catch((error) => alert(error));
+        .then(() => {
+                console.log("Email successfully submitted")
+                document.getElementById("email-button").innerHTML = "✓";
+                // clear form after 1000ms
+                window.setTimeout(() => {
+                    myForm.reset();
+                    document.getElementById("email-button").innerHTML = "→";
+                }, 1000);
+            } 
+        )
+        .catch((error) => alert(error));
   };
 
 document
