@@ -582,3 +582,29 @@ function setProgress(progress) {
     //     progress.toString() + "%";
 }
 window.setProgress = setProgress;
+
+const handleSubmit = (e) => {
+    e.preventDefault();
+    let myForm = document.querySelector(".emailbox");
+    let formData = new FormData(myForm);
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
+    })
+        .then(() => {
+                console.log("Email successfully submitted")
+                document.getElementById("email-button").innerHTML = "✓";
+                // clear form after 1000ms
+                window.setTimeout(() => {
+                    myForm.reset();
+                    document.getElementById("email-button").innerHTML = "→";
+                }, 1000);
+            } 
+        )
+        .catch((error) => alert(error));
+  };
+
+document
+  .querySelector("form")
+  .addEventListener("submit", handleSubmit);

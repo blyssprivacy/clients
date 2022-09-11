@@ -76,15 +76,14 @@
         <div class="infobody">We're
             building more features, like Ledger compatibility, private transaction lookup, and more. Help us test,
             and we'll give you forever free access.</div>
-        <div class="emailbox">
+        <form name="spiral-signup" method="POST" data-netlify="true" class="emailbox">
             <div class="search-container">
-                <input type="text" class="email-inp" placeholder="email address"/>
+                <input type="email" name="email" class="email-inp" placeholder="email address"/>
             </div>
-            <!-- <div>></div> -->
             <div class="purplecircle">
-                <input type="button" class="whitearrow" value="→" />
+                <button type="submit" class="whitearrow" id="email-button">→</button>
             </div>
-        </div>
+        </form>
         <div class="infobody">Want to use our private database for
             something else? Let's talk! <a href="mailto:founders@usespiral.com">founders@usespiral.com</a></div>
     </div>
