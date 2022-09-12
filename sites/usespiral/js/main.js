@@ -430,6 +430,15 @@ async function isStateValid(state) {
     return true;
 }
 
+async function verifyState() {
+    let state = retrieveState();
+    if (state && await isStateValid(state)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 async function setUpClient() {
     let state = retrieveState();
     if (state && await isStateValid(state)) {
@@ -457,12 +466,23 @@ async function uploadState() {
     return id;
 }
 
+async function setUpFull() {
+    let id = await uploadState();
+    if (!id) return false;
+    window.hasSetUp = true;
+    window.id = id;
+}
+
 async function query(targetIdx, title) {
     if (!window.hasSetUp) {
-        let id = await uploadState();
-        if (!id) return false;
-        window.hasSetUp = true;
-        window.id = id;
+        await setUpFull();
+    } else {
+        if (!await verifyState()) {
+            console.log("Re-uploading public params");
+            window.hasSetUp = false;
+            window.id = undefined;
+            await setUpFull();
+        }
     }
 
     stopLoading("");
