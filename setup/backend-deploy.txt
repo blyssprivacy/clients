@@ -1,0 +1,15 @@
+sudo yum install git docker
+pip3 install docker-compose
+sudo systemctl enable docker
+sudo systemctl start docker
+
+git clone git@github.com:menonsamir/spiral-rs-private.git spiral
+[add IAM role]
+sudo usermod -aG docker $USER
+newgrp docker
+
+docker volume create --name=spiral-databases
+docker volume create --name=caddy_data
+[check hostname in //setup/balances/Caddyfile]
+docker-compose build
+docker-compose up -d
