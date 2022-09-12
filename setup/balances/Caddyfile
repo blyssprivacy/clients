@@ -1,4 +1,4 @@
-staging.usespiral.com {
+api.usespiral.com {
     encode {
         gzip
         zstd
