@@ -13,6 +13,7 @@
 
 * {
   box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
 }
 body {
   max-width: 1280px;
@@ -26,7 +27,19 @@ body {
   flex-wrap: wrap;
   row-gap: 20px;
 
-  font-family: 'Inter', sans-serif;
+  
+}
+
+footer {
+  max-width: 1280px;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: red;
+  text-align: center;
+  color: white;
+  border-radius: 20px;
 }
 
 .main-header {
@@ -447,6 +460,11 @@ body {
   .emailbox .purplecircle {
     flex-shrink: 0;
   }
+
+  footer {
+    max-width: 800px;
+  }
+
 }
 
 /**
