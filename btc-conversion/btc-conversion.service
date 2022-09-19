@@ -1,9 +1,0 @@
-[Unit]
-Description=Get BTC to USD conversion rate
-
-[Service]
-Type=simple
-ExecStart=/home/samir/spiral-rs/btc-conversion/get-conversion-rate.sh
-
-[Install]
-WantedBy=default.target
