@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="./css/main.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Spiral Security Model</title>
+
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self';">
+</head>
+
+<body>
+    <div class="topframe">
+        <a class="logo" href="/">
+            <span class="brandname"><img src="favicon.svg" height="48px" class="brand-img" alt="Spiral Logo">Spiral</span>
+            <span class="brandsub">for BTC</span>
+        </a>
+    </div>
+
+    <div class="explain-page">
+        <div class="topframe">
+            <div class="logo">
+                <span class="brandsub">Why use Spiral?</span>
+            </div>
+        </div>
+        <div class="explainer">
+            <article class="main-content">
+                <p>You can use <a href="https://btc.usespiral.com">btc.usespiral.com</a> to fetch the balance of a Bitcoin address <em>completely privately</em>. The server cannot obtain information about which addresses you look up.</p>
+                <p> We'll explain its advantages and disadvantages against the alternative ways to check your balance. You can learn more about the cryptography that Spiral uses in <a href="https://blintzbase.com/posts/pir-and-fhe-from-scratch/">this blog post</a>.</p>
+                <h2 id="public-block-explorer">Public block explorer</h2>
+                <p>
+                One of the most common ways to check the balance of an address is to use a public block explorer, like <a href="https://blockchain.com">Blockchain.com</a> or <a href="https://live.blockcypher.com/">BlockCypher</a>. These sites are reliable and free to use.
+                </p>
+                <p>The downside is that the site learns which addresses you look at. This information gets associated with you IP address and client information, and could be stored, sold or leaked at any later point.
+                If you care about keeping your money private, this is very bad.</p>
+                <h2 id="public-block-explorer-via-tor">Public block explorer via Tor</h2>
+                <p>A common mitigation folks consider is accessing the same public block explorers, but over <a href="https://torproject.org">Tor</a>. Tor uses a network of volunteer servers to route your traffic through an obfuscated path that is difficult for an adversary to trace.</p>
+                <p>The upside is that now, at least your IP is no longer directly associated with your address.</p>
+                <p>The major downside to the kind of privacy that Tor provides is <em>linkability</em>. While Tor will hide your IP address from public block explorers, the addresses that you query are still unprotected. If you make more than one query, you will leak that these addresses are linked or associated, which can be quite bad. You could build a new circuit, or use a different explorer, for each request but even just the timing of your requests will leak their association. You could pace your requests randomly, but at this point, it is quite slow and difficult to check your balance.</p>
+                <h2 id="block-filters">Block filters</h2>
+                <p>Another mitigation that Bitcoin light clients can use is compact block filters (also called &quot;block filters&quot; or, somewhat erroneously, &quot;Neutrino&quot;, and described in <a href="https://github.com/bitcoin/bips/blob/master/bip-0157.mediawiki">BIP157</a> and <a href="https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki">BIP158</a>). A client that would like to view all transactions matching an address can subscribe to a stream of summarized information about each block, and then fetch only the blocks containing a pertinent transaction.</p>
+                <p>The upside is that no single node receives the addresses you are interested in directly.</p>
+                <p>There are several major downsides, however:</p>
+                <ol>
+                    <li>Bandwidth: if your address is involved in a lot of transactions, this approach will consume a lot of bandwidth.</li>
+                    <li>Leakage: you still download blocks using the p2p network, so this method still leaks which blocks you look at. After a sufficient number of blocks, especially for an infrequently used address, this may already be enough to infer the address you are querying.</li>
+                    <li>Setup: the initial setup procedure is resource-intensive, and can take a long time</li>
+                </ol>
+                <h2 id="running-a-full-node-on-a-cloud-provider">Running a full node on a cloud provider</h2>
+                <p>You can do this fairly easily using a standard cloud provider like <a href="https://aws.amazon.com/">AWS</a>, or a more specialized provider like <a href="https://www.quicknode.com/chains/btc">QuickNode</a>. Your node will be have high availability and uptime, and you'll be able to access it from anywhere. The privacy upside is that no public block explorer will learn anything about the addresses you look up.</p>
+                <p>There are several downsides:</p>
+                <ol>
+                    <li>You must completely trust the cloud provider to not eavesdrop, monitor, or log your data. Anything stored is subject to the continuing risk of seizure or leakage.</li>
+                    <li>To set up a cloud computing environment in the first place, you'll typically need to supply detailed identity information, like name, address, an associated fiat payment method, etc. This compounds the risk that your real-world identity is linked to the addresses you look up.</li>
+                    <li>Running a full node in the cloud is relatively costly. On AWS, a t3.medium instance will cost about $30/month, and the bandwidth and storage you need will vary from $0-$20/month.</li>
+                </ol>
+                <h2 id="running-a-full-node-in-your-home-or-business">Running a full node in your home or business</h2>
+                <p>This method achieves the strongest form of privacy: nobody learns which blocks or transactions you look at.</p>
+                <p>The main issue is that this is a pain - you need to buy and maintain your own hardware, accommodate the extra network traffic from downloading blocks, and make it accessible remotely if you'd like to make address queries from outside your home or business. This is perhaps why there are <a href="https://bitnodes.io/nodes/all/">less than 50k running full nodes</a>.</p>
+                <h2 id="spiral-privacy-for-btc">Spiral Privacy for BTC</h2>
+                <p>Spiral uses fully homomorphic encryption to encrypt your query, and answers it without being able to learn anything about the address.</p>
+                <p>The upside is that the address you query remain completely private no matter what the server does. This is also the strongest possible notion of privacy, similar to running a full node in your home or business.</p>
+                <p>One major caveat of Spiral is that, for our security guarantees to hold, the client code must behave correctly (i.e. it must not contain a security vulnerability). Of course, developing trustworthy security-critical software is a process, and it will take time to build public confidence in the Spiral client software. We are committed to the implementing best practices, like:</p>
+                <ul>
+                    <li><a href="https://github.com/spiralprivacy/clients">Making the client open source</a></li>
+                    <li>Encouraging people to look at the source (possibly with a bounty)</li>
+                    <li>Releasing signed desktop and mobile apps with reproducible builds</li>
+                    <li>Using subresource integrity to increase assurance in the web client</li>
+                </ul>
+                <p>Another concern with using <a href="https://btc.usespiral.com">btc.usespiral.com</a> is its potential to increase centralization. We think decentralization and privacy can be complementary; the client for Spiral will <em>always</em> be open source (for security reasons), and we'd like to create a standard for private information retrieval that could be integrated into the Bitcoin RPC API, as an optional endpoint that some nodes could support. </p>
+                <p>This way, we can achieve the best possible decentralization (no dependence on any one organization or server),  privacy (no information leakage whatsoever), and even performance (lower bandwidth usage). Today, with block filters, you have to compromise on both privacy (leakage about which blocks you fetch) and performance (high bandwidth costs).</p>
+            </article>
+        </div>
+    </div>
+</body>

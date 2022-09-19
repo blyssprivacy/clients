@@ -65,8 +65,67 @@
             <div class="infohead">Built on strong cryptography.</div>
             <div class="infobody">Spiral
                 uses fully homomorphic encryption to guarantee your privacy. 
-                Read <a href="https://eprint.iacr.org/2022/368">our paper</a>
-                or check out our <a href="https://github.com/menonsamir/spiral-rs">source code</a> for details.
+                Read about <a href="https://eprint.iacr.org/2022/368">how FHE works</a>,
+                check out
+                <a href="https://eprint.iacr.org/2022/368">our paper</a>,
+                or read our <a href="https://github.com/menonsamir/spiral-rs">code</a> for details.
+            </div>
+        </div>
+    </div>
+
+    <div class="info-why">
+        <div class="infohead">Why Spiral?</div>
+        <div class="infobody">
+            <div class="alternatives">
+                <div class="alternative">
+                    <div class="begin-phrase">
+                        <span class="begin">If you use</span>
+                        <span class="name">public block explorers</span>,
+                    </div>
+                    <div class="why bad">
+                        servers can associate your Bitcoin address and your IP.
+                    </div>
+                </div>
+                <div class="alternative">
+                    <div class="begin-phrase">
+                        <span class="begin">If you use </span>
+                        <span class="name">compact block filters</span>,
+                    </div>
+                    <div class="why kinda-bad">
+                        an observer may still be able to infer your address.
+                    </div>
+                </div>
+                <div class="alternative">
+                    <div class="begin-phrase">
+                        <span class="begin">If you use </span>
+                        <span class="name">Tor</span>,
+                    </div>
+                    <div class="why kinda-bad">
+                        the addresses you look up may still be linked.
+                    </div>
+                </div>
+                <div class="alternative">
+                    <div class="begin-phrase">
+                        <span class="begin">If you </span>
+                        <span class="name">run a full node in the cloud</span>,
+                    </div>
+                    <div class="why kinda-bad">
+                        you have to completely trust your cloud provider.
+                    </div>
+                </div>
+                <div class="alternative">
+                    <div class="begin-phrase">
+                        <span class="begin">If you </span>
+                        <span class="name">use Spiral</span>,
+                    </div>
+                    <div class="why good">
+                        the addresses you look up stay private and unlinkable.<a class="asterisk" href="#warn">*</a>
+                    </div>
+                </div>
+            </div>
+            <div class="tagline">
+                Read more about Spiral's advantages over other ways to fetch your balance
+                <a href="/compare">in our detailed comparison</a>.
             </div>
         </div>
     </div>
@@ -90,8 +149,9 @@
     <script src="js/pako.js"></script>
     <script type="module" src="js/main.js"></script>
 
-    <footer>
-        Spiral is currently in beta. Our implementation is expected to achieve the privacy goals we set above, but has not been formally audited. Do NOT use Spiral for mission-critical applications yet.
+    <footer id="warn" class="warning">
+        Spiral is currently in beta. Our implementation is expected to achieve the privacy goals we set above, but has not been formally audited. 
+        We don't yet recommend using Spiral for mission-critical applications.
     </footer>
 </body>
 

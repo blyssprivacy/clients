@@ -30,16 +30,18 @@ body {
   
 }
 
-footer {
+.warning {
   max-width: 1280px;
   padding-left: 10%;
   padding-right: 10%;
   padding-top: 20px;
   padding-bottom: 20px;
-  background-color: red;
+  background-color: #9D3A3D;
   text-align: center;
   color: white;
   border-radius: 20px;
+  font-size: 18px;
+  font-family: 'Inter', sans-serif;
 }
 
 .main-header {
@@ -176,6 +178,47 @@ footer {
   color: rgba(0,0,0,1);
   font-size: 24px;
   font-weight: 300;
+}
+
+.info-why {
+  background: rgba(245,245,245,1);
+  border-radius: 20px;
+  font-family: Inter;
+  padding: 30px;
+}
+
+.info-why .infohead {
+  min-height: 90px;
+}
+
+.alternative {
+  /* display: flex; */
+  margin-bottom: 10px;
+}
+
+.alternative .begin-phrase .name {
+  font-weight: 500;
+}
+
+.alternative .begin-phrase, .alternative .why {
+  display: inline;
+}
+
+.why.bad, .why.kinda-bad {
+  color: #9D3A3D;
+}
+
+.why.good {
+  color: #4F8933;
+}
+
+.asterisk {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tagline {
+  margin-top: 40px;
 }
 
 .ctabox {
@@ -344,6 +387,7 @@ footer {
 
 .brand-img {
   padding-right: 4px;
+  height: 48px;
 }
 
 .height-detail {
@@ -408,7 +452,7 @@ footer {
     width: 100%;
   }
 
-  .infohead {
+  .infohead, .info-why .infohead {
     min-height: 0;
     margin-bottom: 40px;
   }
@@ -660,4 +704,36 @@ Loading
 
 .hidden {
   visibility: hidden !important;
+}
+
+.explainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  line-height: 1.4;
+}
+
+.explain-page {
+  max-width: 680px;
+  margin-top: 50px;
+}
+
+.explain-page .brandname {
+  font-size: 32px;
+}
+
+.explain-page .brand-img {
+  height: 32px;
+}
+
+.explain-page h2 {
+  color: rgba(0,0,0,1);
+  font-weight: 500;
+  font-size: 24px;
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+a.logo {
+  text-decoration: none;
 }
