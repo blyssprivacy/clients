@@ -32,15 +32,22 @@ jobs:
           # Optional version of wasm-pack to install (eg. "v0.9.1", "latest")
           version: v0.9.1
 
-      # Runs a single command using the runners shell
-      - name: build wasm package
+      - name: Build WASM package
         run: |
           cd client
           wasm-pack build --target web  --out-dir ../sites/usespiral/pkg
 
 
-      # Runs a set of commands using the runners shell
-      - name: webpack all code into bundle
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Install Webpack
+        run: npm install webpack webpack-cli
+
+
+      - name: Webpack all code into bundle
         run: |
-          cd ../sites/usespiral
+          cd sites/usespiral
           webpack --config webpack.config.js
