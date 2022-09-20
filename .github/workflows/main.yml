@@ -1,0 +1,46 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build WebClient
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  wasm:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      - name: install wasm-pack-action
+        # You may pin to the exact commit or the version.
+        # uses: jetli/wasm-pack-action@f98777369a49686b132a9e8f0fdd59837bf3c3fd
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          # Optional version of wasm-pack to install (eg. "v0.9.1", "latest")
+          version: v0.9.1
+
+      # Runs a single command using the runners shell
+      - name: build wasm package
+        run: |
+          cd client
+          wasm-pack build --target web  --out-dir ../sites/usespiral/pkg
+
+
+      # Runs a set of commands using the runners shell
+      - name: webpack all code into bundle
+        run: |
+          cd ../sites/usespiral
+          webpack --config webpack.config.js
