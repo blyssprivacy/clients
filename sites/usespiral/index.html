@@ -8,7 +8,7 @@
     <title>SpiralBTC</title>
 
     <meta http-equiv="Content-Security-Policy"
-      content="default-src 'self' 'unsafe-eval' 'wasm-eval' https://api.usespiral.com;">
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-eval' https://api.usespiral.com;">
 </head>
 
 <body>
@@ -87,8 +87,7 @@
         <div class="infobody">Want to use our private database for
             something else? Let's talk! <a href="mailto:founders@usespiral.com">founders@usespiral.com</a></div>
     </div>
-    <script src="js/pako.js"></script>
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="dist/bundle.js"></script>
 
     <footer>
         Spiral is currently in beta. Our implementation is expected to achieve the privacy goals we set above, but has not been formally audited. Do NOT use Spiral for mission-critical applications yet.
