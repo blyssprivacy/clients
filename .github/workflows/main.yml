@@ -51,10 +51,11 @@ jobs:
         run: |
           cd sites/usespiral
           webpack --config webpack.config.js
-          ls -l
+          ls -lh ./dist
 
       - name: publish JS bundle
         uses: ncipollo/release-action@v1
         with:
           artifacts: "./dist/bundle.js"
           tag: "latest"
+          allowUpdates: true
