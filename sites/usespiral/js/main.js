@@ -5,6 +5,8 @@ import init, {
     decode_response
 } from '../pkg/client.js';
 
+import pako from './pako.js'
+
 const API_URL = "https://api.usespiral.com/btcv1";
 const CHECK_URL = "/check";
 const SETUP_URL = "/setup";
@@ -42,26 +44,6 @@ const PARAMS = {
 };
 
 async function postData(url = '', data = {}, json = false) {
-    // const response = await fetch(url, {
-    //   method: 'POST',
-    //   mode: 'cors',
-    //   cache: 'no-store',
-    //   credentials: 'omit',
-    //   headers: { 
-    //       'Content-Type': 'application/octet-stream',
-    //       'Content-Length': data.length
-    //   },
-    //   redirect: 'follow',
-    //   referrerPolicy: 'no-referrer',
-    //   body: data
-    // });
-    // if (json) {
-    //     return response.json();
-    // } else {
-    //     let data = await response.arrayBuffer();
-    //     return new Uint8Array(data);
-    // }
-
     // Can't use Fetch API here since it lacks progress indication
     const xhr = new XMLHttpRequest();
     xhr.responseType = json ? 'json' : 'arraybuffer';

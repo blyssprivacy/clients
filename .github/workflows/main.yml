@@ -1,0 +1,82 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build WebClient
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  client-build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      - name: install wasm-pack-action
+        # You may pin to the exact commit or the version.
+        # uses: jetli/wasm-pack-action@f98777369a49686b132a9e8f0fdd59837bf3c3fd
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: v0.10.3
+
+      - name: Build WASM package
+        run: |
+          cd client
+          wasm-pack build --target web  --out-dir ../sites/usespiral/pkg
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Install Webpack
+        run: npm install webpack@5.74.0 webpack-cli@4.10.0
+
+      - name: Webpack all code into bundle
+        run: |
+          cd sites/usespiral
+          webpack --config webpack.config.js
+          
+      - name: Upload client code bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle
+          path: sites/usespiral/dist/bundle.js
+
+
+  client-publish:
+    name: Publish client code
+    needs: client-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download bundle
+        uses: actions/download-artifact@v3
+        with:
+          name: bundle
+          
+      - name: Generate bundle hash
+        run: |
+          date > hashes.txt
+          echo "bundle.js sha256 (base64):" >> hashes.txt
+          cat bundle.js | openssl dgst -sha256 -binary | openssl base64 -A >> hashes.txt
+
+      - name: publish JS bundle
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "bundle.js"
+          tag: "latest"
+          allowUpdates: true
+          bodyFile: hashes.txt
