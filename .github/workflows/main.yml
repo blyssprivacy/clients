@@ -67,10 +67,17 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: bundle
-  
+          
+      - name: Generate bundle hash
+        uses: MCJack123/ghaction-Generate-Release-Hashes@v4
+        with:
+          hash-type: sha256
+          file-name: hashes.txt
+
       - name: publish JS bundle
         uses: ncipollo/release-action@v1
         with:
           artifacts: "bundle.js"
           tag: "latest"
           allowUpdates: true
+          bodyFile: hashes.txt
