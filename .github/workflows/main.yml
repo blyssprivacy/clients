@@ -56,3 +56,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "dist/bundle.js"
+          tag: "latest"
