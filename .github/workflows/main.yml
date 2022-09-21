@@ -70,6 +70,7 @@ jobs:
       - name: Generate bundle hash
         run: |
           date > hashes.txt
+          echo "bundle.js sha256 (base64):" >> hashes.txt
           cat bundle.js | openssl dgst -sha256 -binary | openssl base64 -A >> hashes.txt
 
       - name: publish JS bundle
