@@ -68,7 +68,9 @@ jobs:
           name: bundle
           
       - name: Generate bundle hash
-        run: cat bundle.js | openssl dgst -sha256 -binary | openssl base64 -A > hashes.txt
+        run: |
+          date > hashes.txt
+          cat bundle.js | openssl dgst -sha256 -binary | openssl base64 -A >> hashes.txt
 
       - name: publish JS bundle
         uses: ncipollo/release-action@v1
