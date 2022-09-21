@@ -49,13 +49,12 @@ jobs:
         run: |
           cd sites/usespiral
           webpack --config webpack.config.js
-          ls -lh ./dist
           
       - name: Upload client code bundle
         uses: actions/upload-artifact@v3
         with:
           name: bundle
-          path: dist/bundle.js
+          path: sites/usespiral/dist/bundle.js
 
 
   client-publish:
