@@ -15,7 +15,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  wasm:
+  client-build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -37,7 +37,6 @@ jobs:
           cd client
           wasm-pack build --target web  --out-dir ../sites/usespiral/pkg
 
-
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -46,16 +45,33 @@ jobs:
       - name: Install Webpack
         run: npm install webpack webpack-cli
 
-
       - name: Webpack all code into bundle
         run: |
           cd sites/usespiral
           webpack --config webpack.config.js
           ls -lh ./dist
+          
+      - name: Upload client code bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle
+          path: dist/bundle.js
 
+
+  client-publish:
+    name: Publish client code
+    needs: client-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download bundle
+        uses: actions/download-artifact@v3
+        with:
+          name: bundle
+  
       - name: publish JS bundle
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "./dist/bundle.js"
+          artifacts: "bundle.js"
           tag: "latest"
           allowUpdates: true
