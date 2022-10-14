@@ -9,7 +9,7 @@ import pako from './pako.js'
 
 import * as namehash from './eth-ens-namehash.js';
 
-const API_URL = "https://staging.usespiral.com/ensv1";
+const API_URL = "https://ethapi.usespiral.com/ensv1";
 const QUERY_URL = "/query";
 const UUID_V4_LEN = 36;
 
