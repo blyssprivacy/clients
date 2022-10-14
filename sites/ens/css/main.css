@@ -1,0 +1,94 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter-roman.var.woff2') format('woff2-variations');
+  font-weight: 100 1000;
+}
+
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('fonts/inconsolata.woff2') format('woff2-variations');
+  font-weight: 100 1000;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  margin: 20px; 
+}
+
+.main {
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+}
+
+.result {
+  background-color: #eee;
+  border-radius: 20px;
+  min-height: 200px;
+  padding: 20px;
+  overflow-wrap: anywhere;
+  display: flex;
+}
+
+.result .message {
+  min-height: 200px;
+  display: flex;
+}
+
+.centered {
+  align-items: center;
+  justify-content: center;
+}
+
+.name {
+  margin-bottom: 20px;
+  font-size: 1.25em;
+}
+
+.key-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.key-value .key {
+  justify-content: flex-end;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.key-value .value {
+  justify-content: flex-start;
+  font-size: 1em;
+}
+
+.faq .item {
+  margin-bottom: 30px;
+}
+
+.faq .item h2 {
+  font-size: 1.1em;
+  margin: 0 0 5px;
+}
+
+.faq .item p {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+code {
+  font-family: 'Monaco', monospace;
+  font-size: 0.9em;
+  color: #333;
+}
+
+.loading {
+  height: 32px;
+}
