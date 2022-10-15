@@ -141,8 +141,8 @@ function hexToUint8Array(hex) {
 
 function readStr(dv, buffer, i) {
   let dec = new TextDecoder("utf-8");
-  let strLen = dv.getUint8(i);
-  i += 1;
+  let strLen = dv.getUint32(i);
+  i += 4;
   let str = dec.decode(buffer.slice(i, i + strLen));
   i += strLen;
   return {i, str};
@@ -167,8 +167,8 @@ function parseResult(result, hash) {
     i += NODE_PREFIX_BYTES;
     let numAddr = dv.getUint8(i);
     i += 1;
-    let numKeys = dv.getUint8(i);
-    i += 1;
+    let numKeys = dv.getUint32(i);
+    i += 4;
     if (numAddr == 1) {
       // read address
       entry.address = arrayBufferToHex(output.buffer.slice(i, i + ETH_ADDR_BYTES));
