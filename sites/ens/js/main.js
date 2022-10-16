@@ -205,13 +205,16 @@ function parseResult(result, hash) {
 }
 
 function keyValueHtml(key, value) {
-  if (value.startsWith("http")) {
-    value = `<a href="${value}" target="_blank" rel="noreferrer noopener">${value}</a>`;
-  }
-  if (key === "com.twitter") {
+  if (key === "com.twitter" || key === "vnd.twitter") {
     key = "twitter";
     value = `<a href="https://twitter.com/${value}" target="_blank" rel="noreferrer noopener">@${value}</a>`;
+  } else if (key === "url") {
+    let linkTarget = value.startsWith("http") ? value : `http://${value}`;
+    value = `<a href="${linkTarget}" target="_blank" rel="noreferrer noopener">${value}</a>`;
+  } else if (value.startsWith("http")) {
+    value = `<a href="${value}" target="_blank" rel="noreferrer noopener">${value}</a>`;
   }
+  
   return `<div class="key-value">
     <div class="key">${key}</div>
     <div class="value">${value}</div>
@@ -264,7 +267,7 @@ async function query(name) {
   console.log("Final result:")
   console.log(result);
 
-  let resultHtml = await resultToHtml(result, hashArray, normalizedName);
+  let resultHtml = resultToHtml(result, hashArray, normalizedName);
   let outputArea = document.getElementById("output");
   outputArea.innerHTML = resultHtml;
   outputArea.classList.remove("centered");
