@@ -6,115 +6,133 @@
   <link href="./css/loading.css" rel="stylesheet" />
   <link rel="icon" type="image/x-icon" href="favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Spiral for .eth</title>
+  <title>sprl it!</title>
 
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; connect-src 'self' https://ethapi.usespiral.com data:; script-src 'wasm-unsafe-eval' 'self'">
+    content="default-src 'self'; connect-src 'self' https://ethapi.usespiral.com data:; script-src 'wasm-unsafe-eval' 'self'; img-src 'self' data:;">
 </head>
 
 <body>
   <div class="main">
     <div class="result centered">
       <div id="output" class="message">
-        
+
       </div>
       <p class="placeholder off">
         To link to <strong>vitalik.eth</strong>, use
         <a href="/#vitalik.eth">sprl.it/#<strong>vitalik.eth</strong></a>
       </p>
-      <div class="loading">
-        <div class="progress off"><div></div></div>
-        <div class="loading-icon la-ball-clip-rotate la-dark"><div></div></div>
+      <div class="loading off">
+        <div class="progress off">
+          <div></div>
+        </div>
+        <div class="loading-icon la-ball-clip-rotate la-dark">
+          <div></div>
+        </div>
         <div class="message inprogress"></div>
       </div>
     </div>
     <div class="faq">
-      <div class="item">
-        <h2>What is this?</h2>
-        <p>
-          This is a <em>completely private</em> ENS resolver that uses homomorphic encryption to
-          cryptographically ensure that your queries stay private. No third party, not even our server,
-          can see which ".eth" names you resolve.
-        </p>
-        <p>
-          To link to <a href="https://sprl.it/#vitalik.eth">vitalik.eth</a>, use
-          <a href="https://sprl.it/#vitalik.eth">sprl.it/#<strong>vitalik.eth</strong></a>.
-        </p>
-        <p>
-          This service is experimental and still under active development.
-        </p>
+      <div class="blurb">
+        <div class="sprl-logotype">
+          <div class="sprl-logo-container">
+            <img src="favicon.svg" class="sprl-logo" alt="sprl it! logo">
+          </div>
+          <div class="sprl-title">
+            sprl it!
+          </div>
+        </div>
+        <div class="description">
+          <em><strong>sprl it!</strong></em> is an ENS resolver that uses homomorphic encryption
+          to cryptographically ensure privacy. No third party, not even our server,
+          can see which ".eth" URLs you resolve.
+          Use it like
+          <a href="/#vitalik.eth">sprl.it/#<strong>vitalik.eth</strong></a>.
+        </div>
       </div>
-      <div class="item">
-        <h2>How is that possible?</h2>
-        <p>
-          When you navigate to
-          <code>sprl.it/#vitalik.eth</code>,
-          your browser doesn't send anything past the <code>#</code> in the URL to our server; instead, the
-          <code>#vitalik.eth</code>
-          is used by the code in this page to homomorphically encrypt a query, and send this to our server.
-          The server can produce the <em>encrypted</em> answer to your query,
-          without learning that you resolved "vitalik.eth".
-        </p>
-        <p>
-          You can read a detailed techinical explanation of how
-          private information retrieval using homomorphic encryption works in
-          <a href="https://blintzbase.com/posts/pir-and-fhe-from-scratch">this blog post</a>.
-          There is also an <a href="https://ia.cr/2022/368">academic paper</a> outlining the scheme.
-        </p>
-      </div>
-      <div class="item">
-        <h2>How does this compare to other resolvers, like <a href="https://eth.link">eth.link</a> or <a
-            href="https://eth.limo">eth.limo</a>?</h2>
-        <p>
-          Other resolvers learn which names you query - only this one uses homomorphic encryption to hide your query
-          <em>cryptographically</em>.
-          Some promise to only keep "anonymized" logs.
-        </p>
-      </div>
-      <div class="item">
-        <h2>Can I get this level of privacy, but for my own data?</h2>
-        <p>
-          Yes! We are building a managed service that allows you to make similarly private queries over arbitrary data.
-          <a href="https://forms.gle/dk2So1ci9AM4n8iM6">Sign up for our private beta</a>,
-          or <a href="https://calendly.com/samirmenon/spiral-chat">book time with us</a> to chat about your use case.
-        </p>
-      </div>
-      <div class="item">
-        <h2>Is this like DNS-over-HTTPS or something?</h2>
-        <p>
-          No, it's way better. DNS-over-HTTPS keeps your DNS queries from being snooped on by third parties; the DNS
-          server still learns which websites you visit.
-          This service provides much stronger privacy - no entity, not even our server, can learn which ENS addresses you
-          resolve. The difference is analagous to transport security versus end-to-end encryption.
-        </p>
-      </div>
-      <div class="item">
-        <h2>Who builds this?</h2>
-        <p>
-          This site is built and run by <a href="https://usespiral.com">Spiral Privacy</a>.
-          You can email us at <a href="mailto:founders@usespiral.com">founders@usespiral.com</a>.
-        </p>
-      </div>
-      <div class="item">
-        <h2>Can I get this level of privacy, but for Bitcoin?</h2>
-        <p>
-          Yes, at <a href="https://btc.usespiral.com">btc.usespiral.com</a>.
-        </p>
-      </div>
-      <div class="item">
-        <h2>How often does this update with new ENS names?</h2>
-        <p>
-          We consider names registered once the transaction has reached the "safe" commitment level.
-          This typically takes about 45 minutes.
-        </p>
-      </div>
-      <div class="item">
-        <h2>Since you serve this webpage, couldn't you serve malicious code and track my queries?</h2>
-        <p>
-          Yes, this is always a problem when doing cryptography in the browser. Today, you can
-          <a href="https://github.com/spiralprivacy/clients">build the site from source yourself</a>. We will
-          release a browser extension or desktop app in the future.
-        </p>
+      <div class="accordion">
+        <!-- <div class="control">more...</div> -->
+        <div class="more-info collapsed">
+          <div class="item">
+            <h2>How does it work?</h2>
+            <p>
+              When you navigate to
+              <code>sprl.it/#vitalik.eth</code>,
+              your browser doesn't send anything past the <code>#</code> in the URL to our server; instead, the
+              <code>#vitalik.eth</code>
+              is used by the code in this page to homomorphically encrypt a query, and send this to our server.
+              The server can produce the <em>encrypted</em> answer to your query,
+              without learning that you resolved "vitalik.eth".
+            </p>
+            <p>
+              You can read a detailed techinical explanation of how
+              private information retrieval using homomorphic encryption works in
+              <a href="https://blintzbase.com/posts/pir-and-fhe-from-scratch">this blog post</a>.
+              There is also an <a href="https://ia.cr/2022/368">academic paper</a> outlining the scheme.
+              Our system is still under active development and experimental.
+            </p>
+          </div>
+          <div class="item">
+            <h2>Can I get this level of privacy, but over some different data?</h2>
+            <p>
+              Yes! We are building a service that will let you make private queries over arbitrary key-value data. 
+              <a href="https://forms.gle/dk2So1ci9AM4n8iM6">Sign up for our private beta</a> and 
+              <a href="https://calendly.com/samirmenon/spiral-chat">book time with us</a> to chat about your use
+              case.
+            </p>
+          </div>
+          <div class="item">
+            <h2>Can I get this level of privacy, but for Bitcoin?</h2>
+            <p>
+              Yes, at <a href="https://btc.usespiral.com">btc.usespiral.com</a>.
+            </p>
+          </div>
+          <div class="item">
+            <h2>Who builds this?</h2>
+            <p>
+              This site is built and run by <a href="https://usespiral.com">Spiral Privacy</a>.
+              Sign 
+              You can email us at <a href="mailto:founders@usespiral.com">founders@usespiral.com</a>.
+            </p>
+          </div>
+          <div class="item">
+            <h2>How does this compare to <a href="https://eth.link">eth.link</a> or <a
+                href="https://eth.limo">eth.limo</a>?</h2>
+            <p>
+              Other resolvers learn the ".eth" URLs you query, though some promise to keep "anonymized" logs.
+              <em><strong>sprl it!</strong></em> uses homomorphic encryption to actually prevent the server from learning your queries.
+            </p>
+            <p>
+              We don't currently support IPFS resolution, but we're working on it.
+            </p>
+          </div>
+          <div class="item">
+            <h2>Is this like DNS-over-HTTPS or something?</h2>
+            <p>
+              No, it's way better. DNS-over-HTTPS keeps your DNS queries from being snooped on by third parties; the DNS
+              server still learns which websites you visit.
+              This service provides much stronger privacy - no entity, not even our server, can learn which ENS
+              addresses you
+              resolve. The difference is analagous to TLS versus end-to-end encryption.
+            </p>
+          </div>
+          <div class="item">
+            <h2>How often does this update with new ENS names?</h2>
+            <p>
+              We consider names registered once the transaction has reached the "safe" commitment level.
+              This typically takes about 45 minutes.
+            </p>
+          </div>
+          <div class="item">
+            <h2>Since you serve this webpage, couldn't you serve malicious code and track my queries?</h2>
+            <p>
+              Yes, this is always a problem when doing cryptography in the browser. Today, you can
+              <a href="https://github.com/spiralprivacy/clients">build the site from source yourself</a>. We will
+              release a browser extension or desktop app in the future.
+            </p>
+          </div>
+        </div>
+        <button class="read-more">read more...</button>
       </div>
     </div>
   </div>

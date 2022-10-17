@@ -36,6 +36,7 @@ const PARAMS = {
 function startLoading(message, hasProgress) {
   window.loading = true;
   window.started_loading = Date.now();
+  document.querySelector(".loading").classList.remove("off");
   document.querySelector(".placeholder").classList.add("off");
   if (hasProgress) {
     document.querySelector(".progress").classList.remove("off");
@@ -46,6 +47,8 @@ function startLoading(message, hasProgress) {
     document.querySelector(".loading-icon").classList.remove("hidden");
   }
   console.log(message);
+  document.querySelector(".result").classList.add("centered");
+  document.querySelector(".result").classList.remove("populated");
   document.querySelector(".loading .message").classList.add("inprogress");
 }
 window.startLoading = startLoading;
@@ -62,7 +65,9 @@ window.setProgress = setProgress;
 
 function stopLoading(message) {
   window.loading = false;
-  document.querySelector(".loading-icon").classList.add("hidden");
+  document.querySelector(".result").classList.remove("centered");
+  document.querySelector(".result").classList.add("populated");
+  document.querySelector(".loading-icon").classList.add("off");
   let seconds = (Date.now() - window.started_loading) / 1000
   let secondsRounded = Math.round(seconds * 100) / 100;
   let timingMessage = secondsRounded > 0.01 ? (" Took " + secondsRounded + "s.") : "";
@@ -136,7 +141,37 @@ function arrayBufferToHex(buffer) {
 function hexToUint8Array(hex) {
   return new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function (h) {
     return parseInt(h, 16)
-  }))  
+  }))
+}
+
+function stripHexPrefix (value) {
+  return value.slice(0, 2) === '0x' ? value.slice(2) : value;
+}
+
+function toChecksumAddress (address, chainId = null) {
+  if (typeof address !== 'string') {
+    return '';
+  }
+
+  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+    throw new Error(
+      `Given address "${address}" is not a valid Ethereum address.`
+    );
+  }
+
+  const stripAddress = stripHexPrefix(address).toLowerCase();
+  const prefix = chainId != null ? chainId.toString() + '0x' : '';
+  const keccakHash = namehash.sha3(prefix + stripAddress);
+  let checksumAddress = '0x';
+
+  for (let i = 0; i < stripAddress.length; i++) {
+    checksumAddress +=
+      parseInt(keccakHash[i], 16) >= 8
+        ? stripAddress[i].toUpperCase()
+        : stripAddress[i];
+  }
+
+  return checksumAddress;
 }
 
 function readStr(dv, buffer, i) {
@@ -148,13 +183,13 @@ function readStr(dv, buffer, i) {
   return {i, str};
 }
 
-function parseResult(result, hash) {
+function parseResult(result, hash, name) {
   let output;
   try {
     output = pako.inflate(result);
   } catch (err) {
     console.log(err);
-    return '<div class="error-msg">Error retrieving balance for this address.</div>';
+    return '<div class="error-msg">Error retrieving info for this name</div>';
   }
 
   let matches = 0;
@@ -189,6 +224,8 @@ function parseResult(result, hash) {
 
     entry.node = arrayBufferToHex(node);
 
+    console.log(new Uint8Array(node), hash);
+
     if (new Uint8Array(node).every((v,i)=> v === hash[i])) {
       matches += 1;
       entryInfo = entry;
@@ -196,41 +233,68 @@ function parseResult(result, hash) {
   }
 
   if (matches == 0) {
-    return '<div class="error-msg">No balance found for this address (perhaps 0?)</div>';
+    return `<div class="result-inset">
+      <div class="name"><a href="/#${name}">${name}</a></div>  
+      <div class="error-msg">No info found for this name. Check your spelling?</div>
+      </div>`;
   } else if (matches > 1) {
-    return '<div class="error-msg">Error retrieving balance for this address.</div>';
+    return '<div class="error-msg">Error retrieving info for this name</div>';
   }
 
   return entryInfo;
 }
 
+function getSvgIvon(name) {
+  return `<div class="icon icon-${name}"></div>`;
+}
+
 function keyValueHtml(key, value) {
+  const httpRe = /^https?:\/\//;
   if (key === "com.twitter" || key === "vnd.twitter") {
     key = "twitter";
     value = `<a href="https://twitter.com/${value}" target="_blank" rel="noreferrer noopener">@${value}</a>`;
   } else if (key === "url") {
+    let match = httpRe.exec(value);
+    let displayValue = match ? value.slice(match[0].length) : value;
+    if (displayValue.endsWith("/")) displayValue = displayValue.slice(0, displayValue.length - 1);
     let linkTarget = value.startsWith("http") ? value : `http://${value}`;
-    value = `<a href="${linkTarget}" target="_blank" rel="noreferrer noopener">${value}</a>`;
+    value = `<a href="${linkTarget}" target="_blank" rel="noreferrer noopener">${displayValue}</a>`;
   } else if (value.startsWith("http")) {
-    value = `<a href="${value}" target="_blank" rel="noreferrer noopener">${value}</a>`;
+    let match = httpRe.exec(value);
+    let displayValue = match ? value.slice(match[0].length) : value;
+    if (displayValue.endsWith("/")) displayValue = displayValue.slice(0, displayValue.length - 1);
+    value = `<a href="${value}" target="_blank" rel="noreferrer noopener">${displayValue}</a>`;
   }
-  
-  return `<div class="key-value">
+
+  let className = "key-value";
+  if (key === "url" || key === "address") {
+    className = "key-value key-value-icon";
+    
+    if (key === "address") value = toChecksumAddress("0x" + value);
+    key = getSvgIvon(key === "url" ? "link" : "wallet");
+  }
+
+  return `<div class="${className}">
     <div class="key">${key}</div>
     <div class="value">${value}</div>
   </div>`
 }
 
 function resultToHtml(result, hash, name) {
-  let entry = parseResult(result, hash);
+  let entry = parseResult(result, hash, name);
   if (typeof entry === 'string') return entry;
 
   let sortedKeys = entry.data ? Object.keys(entry.data) : [];
+  sortedKeys = sortedKeys.filter((k) => (k != "url") && (k != "address"));
   sortedKeys.sort();
 
+  let hasUrl = entry.data && entry.data.url;
   return `<div class="result-inset">
     <div class="name"><a href="/#${name}">${name}</a></div>
+    <div class="primary-key-values">
+    ${hasUrl ? keyValueHtml("url", entry.data.url) : ""}
     ${entry.address ? keyValueHtml("address", entry.address) : ""}
+    </div>
     ${sortedKeys.map((k) => keyValueHtml(k, entry.data[k])).join('\n')}
   </div>`;
 }
@@ -269,23 +333,47 @@ async function query(name) {
 
   let resultHtml = resultToHtml(result, hashArray, normalizedName);
   let outputArea = document.getElementById("output");
+  let resultArea = document.querySelector(".result");
   outputArea.innerHTML = resultHtml;
-  outputArea.classList.remove("centered");
+  outputArea.classList.add("hidden");
+  resultArea.classList.add("populated");
+  resultArea.classList.remove("centered");
+  setTimeout(() => {
+    outputArea.classList.remove("hidden");
+  }, 200);
 }
 
 async function queryIfPossible() {
   let hashStr = window.location.hash;
   if (hashStr.length > 1 && hashStr.endsWith(".eth")) {
-    document.title = "Spiral: " + hashStr.slice(1);
+    document.title = hashStr.slice(1) + " (sprl it!)";
     document.getElementById("output").innerHTML = "";
+    document.querySelector(".result").classList.remove("off");
     startLoading();
     await query(hashStr.slice(1));
     stopLoading();
   } else {
-    stopLoading();
+    // stopLoading();
+    document.querySelector(".loading-icon").classList.add("off");
     document.querySelector(".placeholder").classList.remove("off");
+    toggleReadMore(true);
   }
 }
 
 window.addEventListener('load', queryIfPossible);
 window.addEventListener('hashchange', queryIfPossible);
+
+function toggleReadMore(noTransition) {
+  let collapsed = document.querySelector(".more-info").classList.contains("collapsed");
+  document.querySelector(".read-more").innerHTML = collapsed ? "read less..." : "read more...";
+  if (noTransition) document.querySelector(".more-info").classList.add("notransition");
+  document.querySelector(".more-info").classList.toggle("collapsed");
+}
+
+document.querySelector(".read-more").addEventListener("click", (e) => {
+  e.preventDefault();
+
+  document.querySelector(".more-info").classList.remove("notransition");
+
+  toggleReadMore();
+});

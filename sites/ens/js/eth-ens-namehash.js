@@ -1469,6 +1469,7 @@
 	}
 
 	var ethEnsNamehashMaster = {
+		sha3,
 	  hash: namehash,
 	  normalize
 	};
