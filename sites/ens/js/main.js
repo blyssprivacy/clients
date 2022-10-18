@@ -224,8 +224,6 @@ function parseResult(result, hash, name) {
 
     entry.node = arrayBufferToHex(node);
 
-    console.log(new Uint8Array(node), hash);
-
     if (new Uint8Array(node).every((v,i)=> v === hash[i])) {
       matches += 1;
       entryInfo = entry;
@@ -235,7 +233,7 @@ function parseResult(result, hash, name) {
   if (matches == 0) {
     return `<div class="result-inset">
       <div class="name"><a href="/#${name}">${name}</a></div>  
-      <div class="error-msg">No info found for this name. Check your spelling?</div>
+      <div class="error-msg">No address or text records were found for this name.</div>
       </div>`;
   } else if (matches > 1) {
     return '<div class="error-msg">Error retrieving info for this name</div>';
